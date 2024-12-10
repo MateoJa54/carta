@@ -112,9 +112,9 @@ const generarPDF = (destinatario) => {
     const doc = new jsPDF();
 
     const texto = textArea.value;
-    const margenIzquierdo = 10;
-    const margenSuperior = 20;
-    const anchoLinea = 180;
+    const margenIzquierdo = 20;
+    const margenSuperior = 40;
+    const anchoLinea = 170;
 
     // Obtener la fecha actual en formato legible
     const fecha = new Date();
@@ -124,15 +124,35 @@ const generarPDF = (destinatario) => {
         day: 'numeric'
     });
 
-    // Agregar encabezado al PDF
-    doc.setFontSize(16);
-    doc.text(`Carta para ${destinatario}`, margenIzquierdo, margenSuperior);
-    doc.setFontSize(12);
-    doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, margenSuperior + 10);
+    // Agregar encabezado estilizado al PDF
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text(`Carta para ${destinatario}`, doc.internal.pageSize.getWidth() / 2, 20, {
+        align: "center"
+    });
 
-    // Dividir el texto en líneas y agregarlo al PDF
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, 30);
+
+    // Dividir el texto en líneas y agregarlo al PDF con estilo
+    doc.setFontSize(14);
+    doc.setFont("times", "italic");
     const lineas = doc.splitTextToSize(texto, anchoLinea);
-    doc.text(lineas, margenIzquierdo, margenSuperior + 20);
+    doc.text(lineas, margenIzquierdo, margenSuperior);
+
+    // Agregar pie de página con número de página
+    const numeroPaginas = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= numeroPaginas; i++) {
+        doc.setPage(i);
+        doc.setFont("courier", "normal");
+        doc.setFontSize(10);
+        doc.text(
+            `Página ${i} de ${numeroPaginas}`,
+            doc.internal.pageSize.getWidth() - 40,
+            doc.internal.pageSize.getHeight() - 10
+        );
+    }
 
     // Generar el nombre del archivo
     const nombreArchivo = `Carta_${destinatario}_${fecha.toISOString().split('T')[0]}.pdf`;
@@ -140,6 +160,31 @@ const generarPDF = (destinatario) => {
     // Descargar el archivo
     doc.save(nombreArchivo);
 };
+
+// Asignar eventos a los botones del modal
+btnEnviarMama.addEventListener('click', () => {
+    destinatarioSeleccionado = "Mamá";
+    generarPDF(destinatarioSeleccionado);
+    cerrarModalEnviar();
+});
+
+btnEnviarPapa.addEventListener('click', () => {
+    destinatarioSeleccionado = "Papá";
+    generarPDF(destinatarioSeleccionado);
+    cerrarModalEnviar();
+});
+
+// Cerrar el modal sin acción
+btnCerrarEnviar.addEventListener('click', cerrarModalEnviar);
+
+// Evento para el botón "Guardar"
+btnSave.addEventListener('click', () => {
+    if (textArea.value.trim() === "") {
+        alert("No hay texto para guardar.");
+        return;
+    }
+    abrirModalEnviar(); // Mostrar el modal para seleccionar el destinatario
+});
 
 // Asignar eventos a los botones del modal
 btnEnviarMama.addEventListener('click', () => {
