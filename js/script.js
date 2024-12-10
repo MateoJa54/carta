@@ -4,6 +4,7 @@ const btnClear = document.getElementById('btnClear');
 const btnSave = document.getElementById('btnSave');
 const btnListen = document.getElementById('btnListen');
 const textArea = document.getElementById('textArea');
+let destinatarioSeleccionado = "";
 
 // Indicador visual
 const recordingIndicator = document.getElementById('recordingIndicator');
@@ -74,7 +75,6 @@ btnClear.addEventListener('click', () => {
         alert("No hay texto para borrar.");
         return;
     }
-    
     abrirModal(); // Mostrar el modal de confirmación
 });
 
@@ -90,31 +90,80 @@ btnCancelDelete.addEventListener('click', () => {
     cerrarModal(); // Cerrar el modal sin borrar el texto
 });
 
-// Función para guardar el texto en un archivo
+// Nuevo modal de envío
+const modalEnviar = document.getElementById('modalEnviar');
+const btnEnviarMama = document.getElementById('btnEnviarMama');
+const btnEnviarPapa = document.getElementById('btnEnviarPapa');
+const btnCerrarEnviar = document.getElementById('btnCerrarEnviar');
+
+// Función para abrir el modal de envío
+const abrirModalEnviar = () => {
+    modalEnviar.style.display = 'flex';
+};
+
+// Función para cerrar el modal de envío
+const cerrarModalEnviar = () => {
+    modalEnviar.style.display = 'none';
+};
+
+// Función para generar y guardar el PDF
+const generarPDF = (destinatario) => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const texto = textArea.value;
+    const margenIzquierdo = 10;
+    const margenSuperior = 20;
+    const anchoLinea = 180;
+
+    // Obtener la fecha actual en formato legible
+    const fecha = new Date();
+    const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    // Agregar encabezado al PDF
+    doc.setFontSize(16);
+    doc.text(`Carta para ${destinatario}`, margenIzquierdo, margenSuperior);
+    doc.setFontSize(12);
+    doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, margenSuperior + 10);
+
+    // Dividir el texto en líneas y agregarlo al PDF
+    const lineas = doc.splitTextToSize(texto, anchoLinea);
+    doc.text(lineas, margenIzquierdo, margenSuperior + 20);
+
+    // Generar el nombre del archivo
+    const nombreArchivo = `Carta_${destinatario}_${fecha.toISOString().split('T')[0]}.pdf`;
+
+    // Descargar el archivo
+    doc.save(nombreArchivo);
+};
+
+// Asignar eventos a los botones del modal
+btnEnviarMama.addEventListener('click', () => {
+    destinatarioSeleccionado = "Mamá";
+    generarPDF(destinatarioSeleccionado);
+    cerrarModalEnviar();
+});
+
+btnEnviarPapa.addEventListener('click', () => {
+    destinatarioSeleccionado = "Papá";
+    generarPDF(destinatarioSeleccionado);
+    cerrarModalEnviar();
+});
+
+// Cerrar el modal sin acción
+btnCerrarEnviar.addEventListener('click', cerrarModalEnviar);
+
+// Evento para el botón "Guardar"
 btnSave.addEventListener('click', () => {
     if (textArea.value.trim() === "") {
         alert("No hay texto para guardar.");
         return;
     }
-
-    // Crear el documento PDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Configurar el texto en el PDF
-    const texto = textArea.value;
-    const margenIzquierdo = 10; // Márgen en mm
-    const margenSuperior = 10; // Márgen en mm
-    const anchoLinea = 180; // Ancho de la línea (A4 tiene 210mm de ancho, con márgenes)
-
-    // Dividir el texto en líneas para ajustarlo al ancho
-    const lineas = doc.splitTextToSize(texto, anchoLinea);
-
-    // Agregar texto al documento PDF
-    doc.text(lineas, margenIzquierdo, margenSuperior);
-
-    // Descargar el PDF
-    doc.save("mi_carta.pdf");
+    abrirModalEnviar(); // Mostrar el modal para seleccionar el destinatario
 });
 
 // Agregar texto reconocido al área de texto en tiempo real
@@ -157,63 +206,3 @@ btnListen.addEventListener('click', () => {
 
 // Actualizar el estado de los botones al cargar
 actualizarEstadoBotones();
-
-// Nuevo modal de envío
-const modalEnviar = document.getElementById('modalEnviar');
-const btnEnviarMama = document.getElementById('btnEnviarMama');
-const btnEnviarPapa = document.getElementById('btnEnviarPapa');
-const btnCerrarEnviar = document.getElementById('btnCerrarEnviar');
-
-// Función para abrir el modal de envío
-const abrirModalEnviar = () => {
-    modalEnviar.style.display = 'flex';
-};
-
-// Función para cerrar el modal de envío
-const cerrarModalEnviar = () => {
-    modalEnviar.style.display = 'none';
-};
-
-// Evento para el botón "Guardar"
-btnSave.addEventListener('click', () => {
-    if (textArea.value.trim() === "") {
-        alert("No hay texto para guardar.");
-        return;
-    }
-
-    // Crear el documento PDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    const texto = textArea.value;
-    const margenIzquierdo = 10; 
-    const margenSuperior = 10; 
-    const anchoLinea = 180; 
-
-    const lineas = doc.splitTextToSize(texto, anchoLinea);
-    doc.text(lineas, margenIzquierdo, margenSuperior);
-
-    // Guardar el PDF
-    doc.save("mi_carta.pdf");
-
-    // Mostrar el modal de opciones de envío
-    abrirModalEnviar();
-});
-
-// Simular el envío por correo
-const enviarCorreo = (destinatario, asunto) => {
-    alert(`Simulando el envío del correo a: ${destinatario} con asunto "${asunto}"`);
-    cerrarModalEnviar();
-};
-
-// Asignar eventos a los botones del modal
-btnEnviarMama.addEventListener('click', () => {
-    enviarCorreo("mama@correo.com", "Carta para Mamá");
-});
-
-btnEnviarPapa.addEventListener('click', () => {
-    enviarCorreo("papa@correo.com", "Carta para Papá");
-});
-
-// Cerrar el modal
-btnCerrarEnviar.addEventListener('click', cerrarModalEnviar);
