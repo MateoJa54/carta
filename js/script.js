@@ -124,41 +124,59 @@ const generarPDF = (destinatario) => {
         day: 'numeric'
     });
 
-    // Agregar encabezado estilizado al PDF
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text(`Carta para ${destinatario}`, doc.internal.pageSize.getWidth() / 2, 20, {
-        align: "center"
-    });
+    // Selector de fondo
+    const fondoSelect = document.getElementById('fondoSelect').value;
+    const fondos = {
+        corazones: "img/corazones.png",
+        juguetes: "img/juguetes.png",
+        caritas: "img/caritas.png",
+        paz: "img/paz.png",
+    };
+    const fondo = fondos[fondoSelect];
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
-    doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, 30);
+    // Cargar la imagen de fondo
+    const img = new Image();
+    img.src = fondo;
+    img.onload = () => {
+        // Agregar fondo al PDF
+        doc.addImage(img, "PNG", 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight());
 
-    // Dividir el texto en líneas y agregarlo al PDF con estilo
-    doc.setFontSize(14);
-    doc.setFont("times", "italic");
-    const lineas = doc.splitTextToSize(texto, anchoLinea);
-    doc.text(lineas, margenIzquierdo, margenSuperior);
+        // Agregar encabezado estilizado al PDF
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text(`Carta para ${destinatario}`, doc.internal.pageSize.getWidth() / 2, 20, {
+            align: "center"
+        });
 
-    // Agregar pie de página con número de página
-    const numeroPaginas = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= numeroPaginas; i++) {
-        doc.setPage(i);
-        doc.setFont("courier", "normal");
-        doc.setFontSize(10);
-        doc.text(
-            `Página ${i} de ${numeroPaginas}`,
-            doc.internal.pageSize.getWidth() - 40,
-            doc.internal.pageSize.getHeight() - 10
-        );
-    }
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, 30);
 
-    // Generar el nombre del archivo
-    const nombreArchivo = `Carta_${destinatario}_${fecha.toISOString().split('T')[0]}.pdf`;
+        // Dividir el texto en líneas y agregarlo al PDF con estilo
+        doc.setFontSize(14);
+        doc.setFont("times", "italic");
+        const lineas = doc.splitTextToSize(texto, anchoLinea);
+        doc.text(lineas, margenIzquierdo, margenSuperior);
 
-    // Descargar el archivo
-    doc.save(nombreArchivo);
+        // Agregar pie de página con número de página
+        const numeroPaginas = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= numeroPaginas; i++) {
+            doc.setPage(i);
+            doc.setFont("courier", "normal");
+            doc.setFontSize(10);
+            doc.text(
+                `Página ${i} de ${numeroPaginas}`,
+                doc.internal.pageSize.getWidth() - 40,
+                doc.internal.pageSize.getHeight() - 10
+            );
+        }
+
+        // Generar el nombre del archivo
+        const nombreArchivo = `Carta_${destinatario}_${fecha.toISOString().split('T')[0]}.pdf`;
+
+        // Descargar el archivo
+        doc.save(nombreArchivo);
+    };
 };
 
 // Asignar eventos a los botones del modal
