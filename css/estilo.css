@@ -21,8 +21,8 @@ body {
 
 .informacion {
     padding: 30px;
-    width: 90%;
-    max-width: 719px;
+    width: 120%;
+    max-width: 870px;
     background-color: #FFE4B5; 
     border-radius: 15px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -269,4 +269,24 @@ button img:hover {
 
 .cerrar-modal:hover {
     background-color: #e55a50;
+}
+
+/* Estilo para el modal de Temas */
+#modalThemes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalThemes .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
 }

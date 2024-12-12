@@ -106,15 +106,145 @@ const cerrarModalEnviar = () => {
     modalEnviar.style.display = 'none';
 };
 
-// Función para generar y guardar el PDF
+// Theme selection modal
+const modalTemas = document.getElementById('modalTemas');
+const btnTheme = document.getElementById('btnTheme');
+const btnCerrarTemas = document.getElementById('btnCerrarTemas');
+const modalTemasButtons = modalTemas.querySelector('.modal-buttons');
+
+// Themes configuration
+const themes = [
+    { name: 'Naturaleza', image: 'img/temas/naturaleza.jpg' },
+    { name: 'Playa', image: 'img/temas/playa.jpg' },
+    { name: 'Montaña', image: 'img/temas/montana.jpg' },
+    { name: 'Ciudad', image: 'img/temas/ciudad.jpg' }
+    // Add more themes as needed
+];
+
+let selectedTheme = null;
+
+// Function to open theme modal
+const abrirModalTemas = () => {
+    // Clear existing buttons
+    modalTemasButtons.innerHTML = '';
+
+    // Create buttons for each theme
+    themes.forEach((tema, index) => {
+        const boton = document.createElement('button');
+        boton.innerHTML = `<img src="${tema.image}" alt="${tema.name}" class="icono-tema">`;
+        boton.title = tema.name;
+        boton.addEventListener('click', () => {
+            selectedTheme = tema;
+            cerrarModalTemas();
+        });
+        modalTemasButtons.appendChild(boton);
+    });
+
+    modalTemas.style.display = 'flex';
+};
+
+// Function to close theme modal
+const cerrarModalTemas = () => {
+    modalTemas.style.display = 'none';
+};
+
+// Event listeners for theme modal
+btnTheme.addEventListener('click', abrirModalTemas);
+btnCerrarTemas.addEventListener('click', cerrarModalTemas);
+
+// Modify the save functionality to generate an image instead of PDF
+const generarImagen = (destinatario) => {
+    if (textArea.value.trim() === "") {
+        alert("No hay texto para guardar.");
+        return;
+    }
+
+    // Create a canvas to draw the letter
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d');
+
+    // Fill background with theme image if selected
+    if (selectedTheme) {
+        const img = new Image();
+        img.onload = () => {
+            // Draw theme image (scaled and centered)
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Add text overlay
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
+
+            // Text styling
+            ctx.font = '20px Arial';
+            ctx.fillStyle = 'black';
+            
+            // Add header
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText(`Carta para ${destinatario}`, 60, 90);
+
+            // Add date
+            ctx.font = '16px Arial';
+            const fecha = new Date().toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            ctx.fillText(`Fecha: ${fecha}`, 60, 120);
+
+            // Add main text
+            ctx.font = '16px Arial';
+            const lineas = wrapText(ctx, textArea.value, 60, 160, canvas.width - 120, 25);
+
+            // Generate filename
+            const nombreArchivo = `Carta_${destinatario}_${new Date().toISOString().split('T')[0]}.png`;
+
+            // Convert to image and download
+            const imagenURL = canvas.toDataURL('image/png');
+            const enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = imagenURL;
+            enlaceDescarga.download = nombreArchivo;
+            enlaceDescarga.click();
+        };
+        img.src = selectedTheme.image;
+    } else {
+        // Fallback if no theme selected
+        alert("Por favor, selecciona un tema antes de guardar.");
+    }
+};
+
+// Helper function to wrap text on canvas
+function wrapText(context, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+
+    for(let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = context.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+            context.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+        }
+        else {
+            line = testLine;
+        }
+    }
+    context.fillText(line, x, y);
+    return y;
+}
+
+// Modificar la función para generar PDF
 const generarPDF = (destinatario) => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
     const texto = textArea.value;
-    const margenIzquierdo = 20;
-    const margenSuperior = 40;
-    const anchoLinea = 170;
+    const margenIzquierdo = 10;
+    const margenSuperior = 20;
+    const anchoLinea = 180;
 
     // Obtener la fecha actual en formato legible
     const fecha = new Date();
@@ -124,96 +254,41 @@ const generarPDF = (destinatario) => {
         day: 'numeric'
     });
 
-    // Selector de fondo
-    const fondoSelect = document.getElementById('fondoSelect').value;
-    const fondos = {
-        corazones: "img/corazones.png",
-        juguetes: "img/juguetes.png",
-        caritas: "img/caritas.png",
-        paz: "img/paz.png",
-    };
-    const fondo = fondos[fondoSelect];
+    // Agregar encabezado al PDF
+    doc.setFontSize(16);
+    doc.text(`Carta para ${destinatario}`, margenIzquierdo, margenSuperior);
+    doc.setFontSize(12);
+    doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, margenSuperior + 10);
 
-    // Cargar la imagen de fondo
-    const img = new Image();
-    img.src = fondo;
-    img.onload = () => {
-        // Agregar fondo al PDF
-        doc.addImage(img, "PNG", 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight());
+    // Dividir el texto en líneas y agregarlo al PDF
+    const lineas = doc.splitTextToSize(texto, anchoLinea);
+    doc.text(lineas, margenIzquierdo, margenSuperior + 20);
 
-        // Agregar encabezado estilizado al PDF
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text(`Carta para ${destinatario}`, doc.internal.pageSize.getWidth() / 2, 20, {
-            align: "center"
-        });
+    // Generar el nombre del archivo
+    const nombreArchivo = `Carta_${destinatario}_${fecha.toISOString().split('T')[0]}.pdf`;
 
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(12);
-        doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, 30);
-
-        // Dividir el texto en líneas y agregarlo al PDF con estilo
-        doc.setFontSize(14);
-        doc.setFont("times", "italic");
-        const lineas = doc.splitTextToSize(texto, anchoLinea);
-        doc.text(lineas, margenIzquierdo, margenSuperior);
-
-        // Agregar pie de página con número de página
-        const numeroPaginas = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= numeroPaginas; i++) {
-            doc.setPage(i);
-            doc.setFont("courier", "normal");
-            doc.setFontSize(10);
-            doc.text(
-                `Página ${i} de ${numeroPaginas}`,
-                doc.internal.pageSize.getWidth() - 40,
-                doc.internal.pageSize.getHeight() - 10
-            );
-        }
-
-        // Generar el nombre del archivo
-        const nombreArchivo = `Carta_${destinatario}_${fecha.toISOString().split('T')[0]}.pdf`;
-
-        // Descargar el archivo
-        doc.save(nombreArchivo);
-    };
+    // Descargar el archivo
+    doc.save(nombreArchivo);
 };
 
 // Asignar eventos a los botones del modal
 btnEnviarMama.addEventListener('click', () => {
     destinatarioSeleccionado = "Mamá";
-    generarPDF(destinatarioSeleccionado);
-    cerrarModalEnviar();
-});
-
-btnEnviarPapa.addEventListener('click', () => {
-    destinatarioSeleccionado = "Papá";
-    generarPDF(destinatarioSeleccionado);
-    cerrarModalEnviar();
-});
-
-// Cerrar el modal sin acción
-btnCerrarEnviar.addEventListener('click', cerrarModalEnviar);
-
-// Evento para el botón "Guardar"
-btnSave.addEventListener('click', () => {
-    if (textArea.value.trim() === "") {
-        alert("No hay texto para guardar.");
-        return;
+    if (selectedTheme) {
+        generarImagen(destinatarioSeleccionado);
+    } else {
+        generarPDF(destinatarioSeleccionado);
     }
-    abrirModalEnviar(); // Mostrar el modal para seleccionar el destinatario
-});
-
-// Asignar eventos a los botones del modal
-btnEnviarMama.addEventListener('click', () => {
-    destinatarioSeleccionado = "Mamá";
-    generarPDF(destinatarioSeleccionado);
     cerrarModalEnviar();
 });
 
 btnEnviarPapa.addEventListener('click', () => {
     destinatarioSeleccionado = "Papá";
-    generarPDF(destinatarioSeleccionado);
+    if (selectedTheme) {
+        generarImagen(destinatarioSeleccionado);
+    } else {
+        generarPDF(destinatarioSeleccionado);
+    }
     cerrarModalEnviar();
 });
 

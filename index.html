@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/estilo.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <title>Escribe con tu voz</title>
 </head>
 <body>
@@ -20,6 +19,7 @@
                 <div id="recordingIndicator"></div>
                 <p id="recordingText" style="display: none;">Grabando...</p>
             </div>
+            
             <!-- Botones de interacción -->
             <div class="botones">
                 <div class="boton">
@@ -42,6 +42,12 @@
                     <button id="btnListen" title="Escuchar" disabled><img src="img/escuchar.png" alt="Escuchar"></button>
                     <p>Escuchar</p>
                 </div>
+                <div class="boton">
+                    <button id="btnTheme" title="Temas">
+                        <img src="img/tema.jpg" alt="Temas">
+                        <p>Temas</p>
+                    </button>
+                </div>
             </div>            
         </div>
     </div>
@@ -54,33 +60,33 @@
             </div>
         </div>
     </div>
-<!-- Nueva ventana modal para opciones de envío -->
-<div class="modal" id="modalEnviar">
-    <div class="modal-content">
-        <h2>¿A quién quieres enviar la carta?</h2>
-        <div class="modal-buttons">
-            <!-- Selector de fondo -->
-            <label for="fondoSelect">Elige un fondo:</label>
-            <select id="fondoSelect">
-                <option value="corazones">Corazones</option>
-                <option value="juguetes">Juguetes</option>
-                <option value="caritas">Caritas Felices</option>
-                <option value="paz">Paz</option>
-            </select>
-            <br>
-            <!-- Botones de destinatario -->
-            <button id="btnEnviarMama" title="Enviar a Mamá">
-                <img src="img/mama.jpg" alt="Enviar a Mamá" class="icono-envio">
-            </button>
-            <button id="btnEnviarPapa" title="Enviar a Papá">
-                <img src="img/papa.jpg" alt="Enviar a Papá" class="icono-envio">
-            </button>
+    <div class="modal" id="modalEnviar">
+        <div class="modal-content">
+            <h2>¿A quién quieres enviar la carta?</h2>
+            <div class="modal-buttons">
+                <!-- Botón con imagen para Mamá -->
+                <button id="btnEnviarMama" title="Enviar a Mamá">
+                    <img src="img/mama.jpg" alt="Enviar a Mamá" class="icono-envio">
+                </button>
+                <!-- Botón con imagen para Papá -->
+                <button id="btnEnviarPapa" title="Enviar a Papá">
+                    <img src="img/papa.jpg" alt="Enviar a Papá" class="icono-envio">
+                </button>
+            </div>
+            <button id="btnCerrarEnviar" class="cerrar-modal">Cerrar</button>
         </div>
-        <button id="btnCerrarEnviar" class="cerrar-modal">Cerrar</button>
     </div>
-</div>
 
-
+    <!-- Nuevo modal para temas -->
+    <div class="modal" id="modalTemas">
+        <div class="modal-content">
+            <h2>Selecciona un tema</h2>
+            <div class="modal-buttons">
+              
+            </div>
+            <button id="btnCerrarTemas" class="cerrar-modal">Cerrar</button>
+        </div>
+    </div>
     
     <script src="js/script.js"></script>
 </body>
