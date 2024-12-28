@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="./css/estilo.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <title>Escribe con tu voz</title>
 </head>
 <body>
@@ -44,14 +43,20 @@
                     <p>Escuchar</p>
                 </div>
                 <div class="boton">
-                    <button id="btnTheme" title="Temas">
-                        <img src="img/tema.jpg" alt="Temas">
-                        <p>Temas</p>
-                    </button>
+                    <button id="btnTheme" title="Temas"><img src="img/tema.jpg" alt="Temas"></button>
+                    <p>Temas</p>
                 </div>
             </div>            
         </div>
+        <aside class="aside-destinatario">
+            <div class="boton-destinatario">
+                <button id="btnAgregarDestinatario" title="Agregar Destinatario">
+                    <img src="img/adulto.png" alt="Agregar Destinatario"> <p>Agregar Destinatario</p>
+                </button>
+            </div>
+        </aside>
     </div>
+
     <div class="modal" id="modalConfirmDelete">
         <div class="modal-content">
             <h2>¿Estás seguro de borrar el texto?</h2>
@@ -86,6 +91,33 @@
               
             </div>
             <button id="btnCerrarTemas" class="cerrar-modal">Cerrar</button>
+        </div>
+    </div>
+    <div class="modal" id="modalDestinatario">
+        <div class="modal-formulario">
+            <h2>Agregar Destinatario</h2>
+            <form id="formDestinatario">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo" placeholder="Correo" required>
+                
+                <label for="parentesco">Parentesco:</label>
+                <select id="parentesco" name="parentesco" required>
+                    <option value="" disabled selected>Selecciona una opción</option>
+                    <option value="papa">Papá</option>
+                    <option value="mama">Mamá</option>
+                    <option value="tio">Tío</option>
+                    <option value="tia">Tía</option>
+                    <option value="amigo">Amigo</option>
+                </select>
+                
+                <div class="form-buttons">
+                    <button type="submit">Guardar</button>
+                    <button type="button" id="btnCerrarFormulario" class="cerrar-modal">Cerrar</button>
+                </div>
+            </form>
         </div>
     </div>
     

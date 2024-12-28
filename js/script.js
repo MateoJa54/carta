@@ -357,6 +357,30 @@ btnListen.addEventListener('click', () => {
     speechSynthesis.speak(utterance);
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const btnAgregarDestinatario = document.getElementById('btnAgregarDestinatario');
+    const modalDestinatario = document.getElementById('modalDestinatario');
+    const btnCerrarFormulario = document.getElementById('btnCerrarFormulario');
+
+    // Abrir el modal
+    btnAgregarDestinatario.addEventListener('click', () => {
+        modalDestinatario.style.display = 'flex';
+    });
+
+    // Cerrar el modal
+    btnCerrarFormulario.addEventListener('click', () => {
+        modalDestinatario.style.display = 'none';
+    });
+
+    // Cerrar el modal al hacer clic fuera del contenido
+    window.addEventListener('click', (event) => {
+        if (event.target === modalDestinatario) {
+            modalDestinatario.style.display = 'none';
+        }
+    });
+});
+
+
 // Actualizar el estado de los botones al cargar
 actualizarEstadoBotones();
 

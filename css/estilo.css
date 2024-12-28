@@ -290,3 +290,73 @@ button img:hover {
     border-radius: 8px;
     text-align: center;
 }
+
+.modal-formulario{
+    background-color: #FFE4B5;
+    padding: 2rem;
+    border-radius: 7px;
+}
+
+.modal-formulario label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1em;
+    color: #555;
+    text-align: left;
+}
+
+.modal-formulario input,
+.modal-formulario select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: #f7f7f7;
+    box-sizing: border-box;
+}
+
+.modal-formulario button {
+    background-color: tomato; 
+    color: white; 
+    padding: 10px 15px; 
+    border: none; 
+    border-radius: 5px; 
+    font-size: 16px;
+    cursor: pointer; 
+    transition: background-color 0.3s, transform 0.2s; 
+}
+
+.modal-formulario button:hover {
+    background-color: #e9543f; 
+    transform: scale(1.05);
+}
+
+.aside-destinatario {
+    position: absolute;
+    right: 5rem;
+    top: 9rem;
+    background-color: #eaeaea;
+    border: 1px solid tomato;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.aside-destinatario button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.aside-destinatario img {
+    width: 5rem;
+    height: 5rem;
+    margin-bottom: 5px;
+}
+
+.aside-destinatario p {
+    font-size: 1.1rem;
+    margin: 0;
+}
