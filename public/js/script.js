@@ -6,6 +6,9 @@ const btnListen = document.getElementById('btnListen');
 const textArea = document.getElementById('textArea');
 let destinatarioSeleccionado = "";
 
+const botonGrabar = document.querySelector('.botonGrabar');
+const progressFill = document.getElementById('progressFill');
+
 // Indicador visual
 const recordingIndicator = document.getElementById('recordingIndicator');
 const recordingText = document.getElementById('recordingText');
@@ -36,14 +39,26 @@ const actualizarEstadoBotones = () => {
 
 // Función para iniciar la grabación
 btnStart.addEventListener('click', () => {
+    // Iniciar reconocimiento de voz
     textArea.placeholder = "Escuchando...";
     recognition.start();
 
-    // Mostrar indicador visual
+    // Mostrar indicador visual de grabación
     recordingIndicator.style.display = "block";
     recordingText.style.display = "block";
 
-    // Actualizar botones
+    // Iniciar la animación de la barra de progreso
+    progressFill.style.width = '100%';
+
+    // Detener la grabación automáticamente después de 60 segundos
+    setTimeout(() => {
+        progressFill.style.width = '0'; // Reiniciar la barra de progreso
+        recordingIndicator.style.display = "none";
+        recordingText.style.display = "none";
+        recognition.stop(); // Detener reconocimiento de voz
+    }, 60000);
+
+    // Actualizar estado de los botones
     actualizarEstadoBotones();
 });
 
@@ -95,6 +110,8 @@ btnConfirmDelete.addEventListener('click', () => {
 btnCancelDelete.addEventListener('click', () => {
     cerrarModal(); // Cerrar el modal sin borrar el texto
 });
+
+
 
 // Nuevo modal de envío
 const modalEnviar = document.getElementById('modalEnviar');

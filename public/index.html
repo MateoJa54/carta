@@ -31,10 +31,16 @@
             
             <!-- Botones de interacción -->
             <div class="botones">
-                <div class="boton">
-                    <button id="btnStart" title="Hablar"><img src="img/microfono-de-estudio.png" alt="Hablar"></button>
+                <div class="boton botonGrabar">
+                    <button id="btnStart" title="Hablar">
+                        <div class="progress-bar">
+                            <div id="progressFill"></div>
+                        </div>
+                        <img src="img/microfono-de-estudio.png" alt="Hablar">
+                    </button>
                     <p>Hablar</p>
                 </div>
+                
                 <div class="boton">
                     <button id="btnStop" title="Parar" disabled><img src="img/boton-detener.png" alt="Parar"></button>
                     <p>Parar</p>
@@ -110,8 +116,6 @@
                     <option value="" disabled selected>Selecciona una opción</option>
                     <option value="papa">Papá</option>
                     <option value="mama">Mamá</option>
-                    <option value="abuelo">Abuelo</option>
-                    <option value="abuela">Abuela</option>
                     <option value="hermano">Hermano</option>
                     <option value="hermana">Hermana</option>
                 </select>

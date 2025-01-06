@@ -1,7 +1,12 @@
 [
   {
     "nombre": "Luis",
-    "correo": "sagnayluis@gmail.com",
-    "parentesco": "abuelo"
+    "correo": "sagnayluis99@gmail.com",
+    "parentesco": "papa"
+  },
+  {
+    "nombre": "Eduardo",
+    "correo": "eduagarcia985@gmail.com",
+    "parentesco": "mama"
   }
 ]
