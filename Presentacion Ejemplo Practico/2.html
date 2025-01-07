@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda en Línea - Moda para Todos</title>
+    <style>
+        :root {
+            --background: #f8f9fa;
+            --text-color: #333;
+            --header-bg: linear-gradient(45deg, #6c5ce7, #0984e3);
+            --button-bg: linear-gradient(45deg, #0984e3, #6c5ce7);
+            --button-hover-bg: linear-gradient(45deg, #6c5ce7, #0984e3);
+            --card-bg: #d6ddf5;
+            --nav-bg: #3d3d3d;
+            --hover-link: #74b9ff;
+            --border-color: #ccc;
+        }
+        [data-theme="dark"] {
+            --background: #181818;
+            --text-color: #e0e0e0;
+            --header-bg: linear-gradient(45deg, #2d3436, #0984e3);
+            --button-bg: linear-gradient(45deg, #0984e3, #00cec9);
+            --button-hover-bg: linear-gradient(45deg, #00cec9, #0984e3);
+            --card-bg: #1f1f1f;
+            --nav-bg: #121212;
+            --hover-link: #00cec9;
+            --border-color: #555;
+        }
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding-top: 1.6rem;
+            padding-bottom: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        header p {
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+        .btn-toggle-theme {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--button-bg);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-toggle-theme:hover {
+            background: var(--button-hover-bg);
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: var(--nav-bg);
+            padding: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: color 0.3s ease-in-out;
+        }
+        nav a:hover {
+            color: var(--hover-link);
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 2rem 1rem;
+        }
+        .section {
+            margin-bottom: 3rem;
+        }
+        .h2 {
+            color: var(--text-color);
+            font-size: 2rem;
+            border-left: 5px solid #6c5ce7;
+            padding-left: 1rem;
+        }
+        .intro {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .intro img {
+            max-width: 38%;
+            border-radius: 10px;
+        }
+        .intro-text {
+            flex: 1;
+            padding-left: 2rem;
+        }
+        .intro-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        .intro-text p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .btn-primary {
+            background: var(--button-bg);
+            border: none;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background: var(--button-hover-bg);
+        }
+        .cart {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .cart h3 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        .cart ul {
+            list-style: none;
+            padding: 0;
+        }
+        .cart ul li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ccc;
+        }
+        .help {
+            background-color: var(--card-bg);;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .help p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .help button {
+            background: linear-gradient(45deg, #0984e3, #6c5ce7);
+            border: none;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        .help button:hover {
+            background: linear-gradient(45deg, #6c5ce7, #0984e3);
+        }
+        .filters {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            gap: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .filters label {
+            flex: 1;
+        }
+        .filters input, .filters select {
+            width: 85%;
+            padding: 0.7rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .filters input:focus, .filters select:focus {
+            border-color: #6c5ce7;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1.5fr));
+            gap: 4rem;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            text-align: center;
+        }
+        .card img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .card h3 {
+            margin: 0.5rem 0;
+        }
+        .card button {
+            background: linear-gradient(45deg, #0984e3, #6c5ce7);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .card button:hover {
+            background: linear-gradient(45deg, #6c5ce7, #0984e3);
+        }
+        .cart ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ccc;
+        }
+        .cart ul li button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.7rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .cart ul li button:hover {
+            background: #c0392b;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    
+        .cart-item-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 1rem;
+        }
+    
+        .cart-item-info {
+            flex: 1;
+        }
+    
+        .cart-item-info h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+    
+        .cart-item-info p {
+            margin: 0.2rem 0 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+    
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+    
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+        .feedback, .accessibility {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+        .feedback textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            transition: border 0.3s;
+            background-color: var(--background);
+            color: var(--text-color);
+        }
+        .feedback textarea:focus {
+            border-color: #6c5ce7;
+        }
+        .feedback button {
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+        .feedback button:hover {
+            background: var(--button-hover-bg);
+        }
+        .btn-add {
+            margin-top: 1rem;
+            background: var(--button-bg);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn-add:hover {
+            background: var(--button-hover-bg);
+        }
+        #comentarios {
+            width: 95%;
+        } 
+        </style>
+</head>
+<body>
+    <header>
+        <h1>Moda para Todos</h1>
+        <p>Tu tienda en línea para ropa moderna, cómoda y económica</p>
+        <button class="btn-toggle-theme" onclick="toggleTheme()">🌙 Modo Oscuro</button>
+    </header>
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#carrito">Carrito</a>
+        <a href="#ayuda">Ayuda</a>
+    </nav>
+    <div class="container">
+        <section id="inicio">
+            <div class="intro">
+                <img src="./img/Inicio.jpeg" alt="Moda para Todos">
+                <div class="intro-text">
+                    <h3>¡Bienvenido a la mejor experiencia de compras en línea!</h3>
+                    <p>Explora nuestra amplia gama de ropa moderna y cómoda para toda la familia. Garantizamos calidad y estilo a precios accesibles.</p>
+                    <a href="#catalogo" class="btn-primary">Explorar Catálogo</a>
+                </div>
+            </div>
+        </section>
+        <section id="catalogo">
+            <h2>Catálogo</h2>
+            <div class="filters">
+                <label for="categoria">Categoría:
+                    <select id="categoria">
+                        <option value="todas">Todas</option>
+                        <option value="moderna">Ropa Moderna</option>
+                        <option value="escolar">Ropa Escolar</option>
+                        <option value="comoda">Ropa Cómoda</option>
+                    </select>
+                </label>
+                <label for="precio">Rango de precio:
+                    <input type="range" id="precio" min="0" max="100" step="20" value="20">
+                    <span id="precio-value">$0</span>
+                </label>
+            </div>
+            <div id="productos" class="grid">
+                <!-- Productos generados dinámicamente -->
+            </div>
+        </section>
+        <section id="carrito">
+            <h2>Carrito de Compras</h2>
+            <div class="cart">
+                <h3>Tu carrito</h3>
+                <ul id="lista-carrito">
+                    <!-- Productos del carrito -->
+                </ul>
+                <p>Total: $<span id="total-carrito">0</span></p>
+            </div>
+        </section>
+        <section id="ayuda">
+            <h2>Ayuda</h2>
+            <div class="help">
+                <p>¿Necesitas ayuda? Accede a nuestro tutorial interactivo para conocer cómo comprar en nuestra tienda.</p>
+                <button onclick="mostrarTutorial()">Ver Tutorial</button>
+            </div>
+        </section>
+        <section class="accessibility">
+            <h2>Accesibilidad e Inclusión</h2>
+            <p>Hemos diseñado esta tienda para ser fácil de usar para todos, incluyendo opciones de texto claro, botones grandes, y una experiencia optimizada para dispositivos móviles.</p>
+        </section>
+        <section class="feedback">
+            <h2>Retroalimentación</h2>
+            <form id="feedback-form">
+                <label for="comentarios">Deja tus comentarios:</label>
+                <textarea id="comentarios" rows="3"></textarea>
+                <button type="submit">Enviar</button>
+            </form>
+        </section>
+    </div>
+    <script>
+        function toggleTheme() {
+            const theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+            document.body.setAttribute("data-theme", theme);
+        }
+
+        function addToCart(product) {
+            const feedback = document.getElementById("live-feedback");
+            feedback.textContent = `Se agregó "${product}" al carrito.`;
+            setTimeout(() => (feedback.textContent = ""), 3000);
+        }
+        const productos = [
+        { id: 1, nombre: "Vestido Moderno", categoria: "moderna", precio: 50, imagen: "https://vasari.vteximg.com.br/arquivos/mozioni-ropa-camisetas20241115.jpg" },
+        { id: 2, nombre: "Uniforme Escolar", categoria: "escolar", precio: 30, imagen: "https://www.realinfluencers.es/wp-content/uploads/2016/10/de-gama-alta-de-encargo-uniformes-escolares-pequec3b1os-trajes-de-viento-colegio-elite-escuela-para-kindergarten_640x640.jpg" },
+        { id: 3, nombre: "Pantalones Cómodos", categoria: "comoda", precio: 40, imagen: "https://offcorss.vtexassets.com/arquivos/ids/866185-1600-auto?v=638615952447500000&width=1600&height=auto&aspect=true" },
+        { id: 4, nombre: "Blusa Elegante", categoria: "moderna", precio: 60, imagen: "https://superexitoec.vteximg.com.br/arquivos/ids/166007-500-500/_MCF2627.png?v=638343596123470000" },
+        { id: 5, nombre: "Falda Casual", categoria: "moderna", precio: 45, imagen: "https://i.pinimg.com/564x/08/72/50/087250d36c582c11d620118f6b18b755.jpg" },
+        { id: 6, nombre: "Camiseta Deportiva", categoria: "comoda", precio: 35, imagen: "https://image.made-in-china.com/202f0j00PbSodweayzqK/Unisex-Customized-Sports-Comfortable-Football-Jersey-Short-Sleeve-Top-T-Shirt.webp" },
+        { id: 7, nombre: "Short de Verano", categoria: "moderna", precio: 25, imagen: "https://http2.mlstatic.com/D_NQ_NP_844865-MLC51412099894_092022-O.webp" },
+        { id: 8, nombre: "Suéter Escolar", categoria: "escolar", precio: 55, imagen: "https://superexitoec.vteximg.com.br/arquivos/ids/167115-500-500/_MCF6539.png?v=638360895213470000" },
+        { id: 9, nombre: "Leggings Cómodos", categoria: "comoda", precio: 30, imagen: "https://image.made-in-china.com/202f0j00QcqliZMtndkH/Plus-Size-Yoga-Gym-Leggings-High-Waisted-Comfortable-Quick-Drying-Leggings.webp" },
+        { id: 10, nombre: "Abrigo de Invierno", categoria: "moderna", precio: 100, imagen: "https://http2.mlstatic.com/D_NQ_NP_675764-CBT52797592734_122022-O.webp" },
+        { id: 11, nombre: "Pantalones Escolares", categoria: "escolar", precio: 40, imagen: "https://superexitoec.vteximg.com.br/arquivos/ids/168559-500-500/_MCF5091.png?v=638409373209500000" },
+        { id: 12, nombre: "Camisa Casual", categoria: "moderna", precio: 50, imagen: "https://superexitoec.vteximg.com.br/arquivos/ids/164079-500-500/260.png?v=638259002947070000" }
+    ];
+
+    const productosContainer = document.getElementById("productos");
+    const precioInput = document.getElementById("precio");
+    const precioValue = document.getElementById("precio-value");
+
+    precioInput.addEventListener("input", () => {
+        precioValue.textContent = `$${precioInput.value}`;
+        mostrarProductos();
+    });
+    function mostrarTutorial() {
+        alert("Este es un tutorial interactivo para ayudarte a comprar en nuestra tienda.");
+    }
+    function mostrarProductos() {
+        productosContainer.innerHTML = "";
+        const maxPrecio = parseInt(precioInput.value, 10);
+        productos
+            .filter(producto => producto.precio <= maxPrecio)
+            .forEach((producto) => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <div class="card-content">
+                        <h3>${producto.nombre}</h3>
+                        <p>Precio: $${producto.precio}</p>
+                        <button onclick="agregarAlCarrito(${producto.id})">Añadir al carrito</button>
+                    </div>
+                `;
+                productosContainer.appendChild(card);
+            });
+    }
+
+    const carrito = [];
+    const carritoContainer = document.getElementById("lista-carrito");
+    const totalCarrito = document.getElementById("total-carrito");
+
+    function agregarAlCarrito(id) {
+        const producto = productos.find((p) => p.id === id);
+        carrito.push(producto);
+        actualizarCarrito();
+    }
+
+    function eliminarDelCarrito(index) {
+        carrito.splice(index, 1);
+        actualizarCarrito();
+    }
+
+    function actualizarCarrito() {
+        carritoContainer.innerHTML = "";
+        let total = 0;
+        carrito.forEach((producto, index) => {
+            const item = document.createElement("li");
+            item.className = "cart-item";
+            item.innerHTML = `
+                <img src="${producto.imagen}" alt="${producto.nombre}" class="cart-item-img">
+                <div class="cart-item-info">
+                    <h4>${producto.nombre}</h4>
+                    <p>Precio: $${producto.precio}</p>
+                </div>
+                <button onclick="eliminarDelCarrito(${index})" class="btn-delete">Eliminar</button>
+            `;
+            carritoContainer.appendChild(item);
+            total += producto.precio;
+        });
+        totalCarrito.textContent = total;
+    }
+
+    mostrarProductos();
+</script>
+</body>
+</html>
