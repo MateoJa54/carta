@@ -311,7 +311,7 @@ const generarPDF = (destinatario) => {
 
 // Asignar eventos a los botones del modal
 btnEnviarMama.addEventListener('click', () => {
-    destinatarioSeleccionado = "Mamá";
+    destinatarioSeleccionado = "mama";
     if (selectedTheme) {
         generarImagen(destinatarioSeleccionado);
     } else {
@@ -321,7 +321,7 @@ btnEnviarMama.addEventListener('click', () => {
 });
 
 btnEnviarPapa.addEventListener('click', () => {
-    destinatarioSeleccionado = "Papá";
+    destinatarioSeleccionado = "papa";
     if (selectedTheme) {
         generarImagen(destinatarioSeleccionado);
     } else {
@@ -446,6 +446,37 @@ formDestinatario.addEventListener('submit', async (event) => {
     formDestinatario.reset();
     modalDestinatario.style.display = 'none';
 });
+
+const enviarCarta = async (destinatario) => {
+    try {
+        const respuesta = await fetch('/enviar-carta', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                destinatario: destinatario.correo,
+                asunto: `Carta para ${destinatario.nombre}`,
+                mensaje: textArea.value,
+            }),
+        });
+
+        if (!respuesta.ok) {
+            throw new Error('Error al enviar el correo');
+        }
+
+        alert('Carta enviada exitosamente.');
+    } catch (error) {
+        console.error('Error al enviar la carta:', error);
+        alert('No se pudo enviar la carta.');
+    }
+    console.log({
+        destinatario: destinatario.correo,
+        asunto: `Carta para ${destinatario.nombre}`,
+        mensaje: textArea.value,
+    });
+    
+};
 
 // Actualizar el estado de los botones al cargar
 actualizarEstadoBotones();

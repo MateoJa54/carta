@@ -1,68 +1,76 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
 const fs = require('fs');
-const path = require('path');
+require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 8800;
 
-// Ruta del archivo JSON
-const archivoJSON = path.join(__dirname, 'destinatarios.json');
+// Middleware para procesar JSON y archivos estáticos
+app.use(bodyParser.json());
+app.use(express.static('public')); // Servir archivos estáticos desde la carpeta 'public'
 
-// Asegurarse de que el archivo JSON exista
-if (!fs.existsSync(archivoJSON)) {
-    fs.writeFileSync(archivoJSON, '[]', 'utf8');
+// Cargar destinatarios desde el archivo JSON
+const destinatarios = JSON.parse(fs.readFileSync('destinatarios.json', 'utf-8'));
+
+// Función para obtener el correo electrónico basado en el parentesco
+function obtenerCorreoPorParentesco(parentesco) {
+    const destinatario = destinatarios.find(d => d.parentesco === parentesco);
+    if (!destinatario) {
+        throw new Error(`No se encontró un destinatario con el parentesco: ${parentesco}`);
+    }
+    return destinatario.correo;
 }
 
-// Middleware para parsear JSON
-app.use(express.json());
-app.use(express.static('public')); // Sirve archivos estáticos desde la carpeta "public"
+// Ruta principal para enviar correos
+app.post('/enviar-correo', async (req, res) => {
+    const { parentesco, asunto, mensaje, archivo } = req.body;
 
-// Ruta para obtener los destinatarios
-app.get('/destinatarios', (req, res) => {
-    fs.readFile(archivoJSON, 'utf8', (err, data) => {
-        if (err) {
-            if (err.code === 'ENOENT') {
-                return res.json([]); // Si el archivo no existe, retorna un arreglo vacío
-            }
-            return res.status(500).json({ error: 'Error al leer el archivo' });
-        }
-        try {
-            res.json(JSON.parse(data));
-        } catch (e) {
-            res.status(500).json({ error: 'Error al analizar el archivo JSON' });
-        }
-    });
-});
+    if (!parentesco || !asunto || !mensaje || !archivo) {
+        return res.status(400).json({ error: 'Faltan datos obligatorios (parentesco, asunto, mensaje, archivo).' });
+    }
 
-// Ruta para agregar un nuevo destinatario
-app.post('/destinatarios', (req, res) => {
-    const nuevoDestinatario = req.body;
+    try {
+        const destinatarioCorreo = obtenerCorreoPorParentesco(parentesco);
+        const rutaArchivo = `cartas/${parentesco}_carta.png`;
+        fs.writeFileSync(rutaArchivo, archivo, 'base64');
 
-    fs.readFile(archivoJSON, 'utf8', (err, data) => {
-        let destinatarios = [];
-        if (!err) {
-            try {
-                destinatarios = JSON.parse(data) || [];
-            } catch (e) {
-                console.error('Error al analizar JSON:', e.message);
-            }
-        }
-        destinatarios.push(nuevoDestinatario);
-
-        fs.writeFile(archivoJSON, JSON.stringify(destinatarios, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Error al guardar el archivo' });
-            }
-            res.status(201).json({ message: 'Destinatario agregado exitosamente' });
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
         });
-    });
+
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: destinatarioCorreo,
+            subject: asunto,
+            text: mensaje,
+            attachments: [
+                {
+                    filename: `${parentesco}_carta.png`,
+                    path: rutaArchivo,
+                },
+            ],
+        });
+
+        res.status(200).json({ message: 'Correo enviado exitosamente con la carta adjunta.' });
+    } catch (error) {
+        console.error('Error al enviar el correo:', error);
+        res.status(500).json({ error: 'Ocurrió un error al enviar el correo.' });
+    }
 });
 
-app.get('/', (req, res) => {
-    res.redirect('/index.html'); // Redirige al archivo en la carpeta public
-});
+// Crear la carpeta "cartas" si no existe
+if (!fs.existsSync('cartas')) {
+    fs.mkdirSync('cartas');
+}
 
 // Iniciar el servidor
 app.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+    console.log(`Servidor ejecutándose en el puerto ${PORT}`);
 });
+
