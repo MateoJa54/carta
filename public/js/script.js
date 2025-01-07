@@ -13,6 +13,7 @@ const progressFill = document.getElementById('progressFill');
 const recordingIndicator = document.getElementById('recordingIndicator');
 const recordingText = document.getElementById('recordingText');
 
+
 // Modal de confirmación para borrar texto
 const modalConfirmDelete = document.getElementById('modalConfirmDelete');
 const btnConfirmDelete = document.getElementById('btnConfirmDelete');
@@ -477,6 +478,66 @@ const enviarCarta = async (destinatario) => {
     });
     
 };
+// Cargar sonidos
+const sonidos = {
+    hablar: new Audio("./Audio/Hablar.mp3"),
+    parar: new Audio("./Audio/Parar.mp3"),
+    limpiar: new Audio("./Audio/Borrar.mp3"),
+    guardar: new Audio("./Audio/Guardar.mp3"),
+    escuchar: new Audio("./Audio/Escuchar.mp3"),
+    temas: new Audio("./Audio/Temas.mp3"),
+    agregar: new Audio("./Audio/Agregar.mp3"),
+    elegir: new Audio("./Audio/Elegir.mp3"),
+    bienvenido: new Audio("./Audio/Bienvenido.mp3"),
+};
+
+// Función para detener sonidos en reproducción
+function detenerSonidos() {
+    for (let key in sonidos) {
+        if (!sonidos[key].paused) {
+            sonidos[key].pause();
+            sonidos[key].currentTime = 0; // Reiniciar el sonido
+        }
+    }
+}
+
+window.addEventListener("load", () => {
+    sonidos.bienvenido.play();
+});
+// Asignar eventos a los botones
+document.getElementById("btnStart").addEventListener("mouseenter", () => {
+    detenerSonidos();
+    sonidos.hablar.play();
+});
+document.getElementById("btnStop").addEventListener("mouseenter", () => {
+    detenerSonidos();
+    sonidos.parar.play();
+});
+document.getElementById("btnClear").addEventListener("mouseenter", () => {
+    detenerSonidos();
+    sonidos.limpiar.play();
+});
+document.getElementById("btnSave").addEventListener("mouseenter", () => {
+    detenerSonidos();
+    sonidos.guardar.play();
+});
+document.getElementById("btnListen").addEventListener("mouseenter", () => {
+    detenerSonidos();
+    sonidos.escuchar.play();
+});
+document.getElementById("btnTheme").addEventListener("mouseenter", () => {
+    detenerSonidos();
+    sonidos.temas.play();
+});
+document.getElementById("btnAgregarDestinatario").addEventListener("mouseenter", () => {
+    detenerSonidos();
+    sonidos.agregar.play();
+});
+document.getElementById("elegir").addEventListener("mouseenter", () => {
+    detenerSonidos();
+    sonidos.elegir.play();
+});
+
 
 // Actualizar el estado de los botones al cargar
 actualizarEstadoBotones();
