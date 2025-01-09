@@ -289,8 +289,10 @@ const generarImagen = (destinatario) => {
       const enlaceDescarga = document.createElement("a");
       enlaceDescarga.href = imagenURL;
       enlaceDescarga.download = nombreArchivo;
+      const destinatarioObj = dataDestinatarios[destinatario];
+      sendMail(destinatarioObj.correo, destinatarioObj.nombre, imagenURL);
+    console.log("sending email" + destinatario);
       enlaceDescarga.click();
-      sendMail(destinatario.correo, destinatario.nombre, imagenURL);
 
       //return the image in base64
     };
@@ -388,7 +390,7 @@ const sendMail = async (to, name, imagen) => {
       body: JSON.stringify({
         email: to,
         subject: `Carta para ${name}`,
-        message: `Una carta de tu hijo: `,
+        message: 'Una carta de tu hijo',
         image: imagen.split(",")[1],
       }),
     });
