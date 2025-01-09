@@ -4,9 +4,29 @@ const btnClear = document.getElementById("btnClear");
 const btnSave = document.getElementById("btnSave");
 const btnListen = document.getElementById("btnListen");
 const textArea = document.getElementById("textArea");
+const letterThemeContainer = document.getElementById("letterTheme");
+const dateOfToday = document.getElementById("dataOfToday");
 let destinatarioSeleccionado = "";
 
+const themesClasses = {
+  Naturaleza: "letter-theme nature-theme",
+  Playa: "letter-theme beach-theme",
+  Montaña: "letter-theme pink-theme",
+  Ciudad: "letter-theme city-theme",
+};
+
 let currentImage = "";
+
+let dataDestinatarios = {
+    mama : {
+        nombre: "",
+        correo: ""
+    },
+    papa: {
+        nombre: "",
+        correo: ""
+    }
+};
 
 const botonGrabar = document.querySelector(".botonGrabar");
 const progressFill = document.getElementById("progressFill");
@@ -38,6 +58,14 @@ const actualizarEstadoBotones = () => {
   btnSave.disabled = textArea.value.trim() === "";
   btnListen.disabled = textArea.value.trim() === "";
 };
+
+//add value inside p tag dateOfToday
+dateOfToday.innerHTML = new Date().toLocaleDateString("es-ES", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    });
 
 // Función para iniciar la grabación
 btnStart.addEventListener("click", () => {
@@ -174,6 +202,8 @@ const abrirModalTemas = () => {
     boton.title = tema.name;
     boton.addEventListener("click", () => {
       selectedTheme = tema;
+      letterThemeContainer.className = themesClasses[selectedTheme.name];
+
       cerrarModalTemas();
     });
     modalTemasButtons.appendChild(boton);
@@ -193,6 +223,11 @@ btnCerrarTemas.addEventListener("click", cerrarModalTemas);
 
 // Modify the save functionality to generate an image instead of PDF
 const generarImagen = (destinatario) => {
+    if (dataDestinatarios[destinatario].correo === "") {
+        alert("No se ha encontrado información del destinatario.");
+        return;
+    }
+
   if (textArea.value.trim() === "") {
     alert("No hay texto para guardar.");
     return;
@@ -255,7 +290,7 @@ const generarImagen = (destinatario) => {
       enlaceDescarga.href = imagenURL;
       enlaceDescarga.download = nombreArchivo;
       enlaceDescarga.click();
-      sendMail("mateojgarciag@gmail.com", "Mama", imagenURL);
+      sendMail(destinatario.correo, destinatario.nombre, imagenURL);
 
       //return the image in base64
     };
@@ -353,7 +388,7 @@ const sendMail = async (to, name, imagen) => {
       body: JSON.stringify({
         email: to,
         subject: `Carta para ${name}`,
-        message: textArea.value,
+        message: `Una carta de tu hijo: `,
         image: imagen.split(",")[1],
       }),
     });
@@ -473,22 +508,60 @@ btnCerrarFormulario.addEventListener("click", () => {
 
 // Función para enviar destinatario al servidor
 const guardarDestinatario = async (nuevoDestinatario) => {
-  try {
-    const respuesta = await fetch("/destinatarios", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(nuevoDestinatario),
-    });
+//   try {
+//     const respuesta = await fetch("/destinatarios", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(nuevoDestinatario),
+//     });
 
-    if (!respuesta.ok) {
-      throw new Error("Error al guardar el destinatario");
-    }
+//     if (!respuesta.ok) {
+//       throw new Error("Error al guardar el destinatario");
+//     }
 
-    alert("Destinatario agregado correctamente.");
-  } catch (error) {
-    console.error("Error al guardar el destinatario:", error);
-    alert("No se pudo guardar el destinatario.");
-  }
+//     alert("Destinatario agregado correctamente.");
+//   } catch (error) {
+//     console.error("Error al guardar el destinatario:", error);
+//     alert("No se pudo guardar el destinatario.");
+//   }
+
+
+
+dataDestinatarios[formDestinatario.parentesco.value].nombre = formDestinatario.nombre.value;
+
+dataDestinatarios[formDestinatario.parentesco.value].correo = formDestinatario.correo.value;
+
+console.log(dataDestinatarios);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 };
 
 // Evento de envío del formulario

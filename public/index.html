@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,27 +9,39 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <title>Escribe con tu voz</title>
 </head>
+
 <body>
     <div class="contenedor">
         <div class="aside">
             <aside class="aside-destinatario">
                 <div class="boton-destinatario">
                     <button id="btnAgregarDestinatario" title="Agregar Destinatario">
-                        <img src="img/adulto.png" alt="Agregar Destinatario"> <p>Agregar Destinatario</p>
+                        <img src="img/adulto.png" alt="Agregar Destinatario">
+                        <p>Agregar Destinatario</p>
                     </button>
                 </div>
             </aside>
         </div>
         <div class="informacion">
-            <h1>¡Crea tu carta hablando!</h1>
-            <textarea id="textArea" cols="30" rows="10" placeholder="Tu carta aparecerá aquí..." readonly></textarea>
             
+            <h1>¡Crea tu carta hablando!</h1>
+            
+            <div class="letter-theme " id="letterTheme">
+                <div>
+                    <strong>Carta para un familiar</strong>
+                    <p id="dataOfToday">Fecha: 8 de enero del 2025</p>
+                    <textarea id="textArea" cols="30" rows="10" placeholder="Tu carta aparecerá aquí..."
+                    readonly></textarea>
+                </div>
+            </div>
+            <!-- <textarea id="textArea" cols="30" rows="10" placeholder="Tu carta aparecerá aquí..." readonly></textarea> -->
+
             <!-- Indicador de grabación -->
             <div class="indicador">
                 <div id="recordingIndicator"></div>
                 <p id="recordingText" style="display: none;">Grabando...</p>
             </div>
-            
+
             <!-- Botones de interacción -->
             <div class="botones">
                 <div class="boton botonGrabar">
@@ -40,7 +53,7 @@
                     </button>
                     <p>Hablar</p>
                 </div>
-                
+
                 <div class="boton">
                     <button id="btnStop" title="Parar" disabled><img src="img/boton-detener.png" alt="Parar"></button>
                     <p>Parar</p>
@@ -50,18 +63,20 @@
                     <p>Limpiar</p>
                 </div>
                 <div class="boton">
-                    <button id="btnSave" title="Guardar" disabled><img src="img/guardar-el-archivo.png" alt="Guardar"></button>
+                    <button id="btnSave" title="Guardar" disabled><img src="img/guardar-el-archivo.png"
+                            alt="Guardar"></button>
                     <p>Guardar</p>
                 </div>
                 <div class="boton">
-                    <button id="btnListen" title="Escuchar" disabled><img src="img/escuchar.png" alt="Escuchar"></button>
+                    <button id="btnListen" title="Escuchar" disabled><img src="img/escuchar.png"
+                            alt="Escuchar"></button>
                     <p>Escuchar</p>
                 </div>
                 <div class="boton">
                     <button id="btnTheme" title="Temas"><img src="img/tema.jpg" alt="Temas"></button>
                     <p>Temas</p>
                 </div>
-            </div>            
+            </div>
         </div>
     </div>
 
@@ -96,7 +111,7 @@
         <div class="modal-content">
             <h2>Selecciona un tema</h2>
             <div class="modal-buttons">
-              
+
             </div>
             <button id="btnCerrarTemas" class="cerrar-modal">Cerrar</button>
         </div>
@@ -107,10 +122,10 @@
             <form id="formDestinatario">
                 <label for="nombre">Nombre:</label>
                 <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
-                
+
                 <label for="correo">Correo:</label>
                 <input type="email" id="correo" name="correo" placeholder="Correo" required>
-                
+
                 <label for="parentesco">Parentesco:</label>
                 <select id="parentesco" name="parentesco" required>
                     <option value="" disabled selected>Selecciona una opción</option>
@@ -119,7 +134,7 @@
                     <option value="hermano">Hermano</option>
                     <option value="hermana">Hermana</option>
                 </select>
-                
+
                 <div class="form-buttons">
                     <button type="submit">Guardar</button>
                     <button type="button" id="btnCerrarFormulario" class="cerrar-modal">Cerrar</button>
@@ -127,7 +142,8 @@
             </form>
         </div>
     </div>
-    
+
     <script src="js/script.js"></script>
 </body>
+
 </html>
