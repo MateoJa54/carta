@@ -12,7 +12,7 @@ dotenv.config();
 const EMAIL = process.env.EMAIL;
 const PASSWD = process.env.PASSWD;
 
-console.log(`Credentials ${EMAIL}:${PASSWD}`);
+console.log(`Credentials ${EMAIL}`);
 
 //middlewares
 

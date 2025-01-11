@@ -6,7 +6,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #ffe3d0; 
+    background-color: #ffdec7; 
 }
 
 .contenedor {
@@ -15,7 +15,7 @@ body {
     display: flex;
     align-items: center;
     text-align: center;
-    background-color: #ffe3d0; 
+    background-color: #ffebde; 
     gap: 1rem;
 }
 
@@ -23,7 +23,7 @@ body {
     margin-right: 2rem;
     padding: 25px;
     width: 870px;
-    background-color: #FFE4B5; 
+    background-color: #ffe1ad; 
     border-radius: 15px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
@@ -510,18 +510,29 @@ button img:hover {
 }
 
 
-.nature-theme{
-    background-image: url('./../img/temas/naturaleza.jpg');
-}
-
 .beach-theme{
     background-image: url('./../img/temas/playa.jpg');
 }
 
-.pink-theme{
-    background-image: url('./../img/temas/montana.jpg');
-}
-
 .city-theme{
     background-image: url('./../img/temas/ciudad.jpg');
+}
+
+.love-theme{
+    background-image: url('./../img/temas/corazon.jpg');
+
+}
+
+.paisaje-theme{
+    background-image: url('./../img/temas/paisaje.jpeg');
+
+}
+
+.blue-theme{
+    background-image: url('./../img/temas/divertido-nino.jpeg');
+
+}
+
+.pink-theme{
+    background-image: url('./../img/temas/divertido-nina.jpeg');
 }
