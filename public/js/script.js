@@ -64,12 +64,16 @@ const recognition = new (window.SpeechRecognition ||
 recognition.continuous = true;
 recognition.lang = "es-ES";
 
-// Función para actualizar el estado de los botones
+let isRecording = false; // Estado de grabación
+let progressTimeout; // Control del timeout de progreso
+
+// Actualizar estado de los botones
 const actualizarEstadoBotones = () => {
-  btnStop.disabled = recordingIndicator.style.display !== "block";
-  btnClear.disabled = textArea.value.trim() === "";
-  btnSave.disabled = textArea.value.trim() === "" || !selectedTheme; // Deshabilitado si no hay texto o tema seleccionado
-  btnListen.disabled = textArea.value.trim() === "";
+  btnStart.disabled = isRecording; // "Hablar" solo habilitado si no está grabando
+  btnStop.disabled = !isRecording; // "Parar" solo habilitado si está grabando
+  btnClear.disabled = isRecording || textArea.value.trim() === ""; // "Limpiar" habilitado solo si no está grabando y hay texto
+  btnListen.disabled = isRecording || textArea.value.trim() === ""; // "Escuchar" habilitado solo si no está grabando y hay texto
+  btnSave.disabled = isRecording || textArea.value.trim() === "" || !selectedTheme;  // "Guardar" habilitado solo si no está grabando y hay texto o si no hay texto o tema seleccionado
 };
 
 //add value inside p tag dateOfToday
@@ -82,46 +86,51 @@ dateOfToday.innerHTML = new Date().toLocaleDateString("es-ES", {
 
 // Función para iniciar la grabación
 btnStart.addEventListener("click", () => {
-  // Iniciar reconocimiento de voz
+  if (isRecording) return;
+
+  isRecording = true;
   textArea.placeholder = "Escuchando...";
   recognition.start();
 
-  // Mostrar indicador visual de grabación
+  // Mostrar indicadores visuales de grabación
   recordingIndicator.style.display = "block";
   recordingText.style.display = "block";
+  progressFill.style.width = "0";
 
-  // Iniciar la animación de la barra de progreso
+  // Animar la barra de progreso
+  progressFill.style.transition = "width 60s linear";
   progressFill.style.width = "100%";
 
   // Detener la grabación automáticamente después de 60 segundos
-  setTimeout(() => {
-    progressFill.style.width = "0"; // Reiniciar la barra de progreso
-    recordingIndicator.style.display = "none";
-    recordingText.style.display = "none";
-    recognition.stop(); // Detener reconocimiento de voz
-  }, 30000);
+  progressTimeout = setTimeout(() => {
+    detenerGrabacion(); // Detener la grabación automáticamente
+  }, 60000);
 
-  // Actualizar estado de los botones
   actualizarEstadoBotones();
 });
 
-// Función para detener la grabación
-btnStop.addEventListener("click", () => {
-  if (recordingIndicator.style.display === "none") {
-    alert("No hay grabación en curso.");
-    return;
-  }
+// Función para detener la grabación (automática o manual)
+const detenerGrabacion = () => {
+  if (!isRecording) return;
 
-  textArea.placeholder = "Grabación detenida.";
+  isRecording = false;
   recognition.stop();
 
-  // Ocultar indicador visual
+  // Ocultar indicadores visuales de grabación
   recordingIndicator.style.display = "none";
   recordingText.style.display = "none";
 
-  // Actualizar botones
+  // Reiniciar barra de progreso
+  clearTimeout(progressTimeout); // Limpiar el timeout automático
+  progressFill.style.transition = "none"; // Detener la transición
+  progressFill.style.width = "0";
+
   actualizarEstadoBotones();
-});
+};
+
+
+// Función para detener la grabación
+btnStop.addEventListener("click", detenerGrabacion);
 
 // Función para abrir el modal de confirmación
 const abrirModal = () => {
@@ -135,11 +144,12 @@ const cerrarModal = () => {
 
 // Función para limpiar el texto (con modal)
 btnClear.addEventListener("click", () => {
-  if (textArea.value.trim() === "") {
-    alert("No hay texto para borrar.");
+  if (isRecording || textArea.value.trim() === ""){
+    alert("No hay texto que borrar");
     return;
-  }
-  abrirModal(); // Mostrar el modal de confirmación
+  } 
+  textArea.value = "";
+  actualizarEstadoBotones();
 });
 
 // Confirmar la acción de borrar
@@ -343,58 +353,58 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 }
 
 // Modificar la función para generar PDF
-const generarPDF = (destinatario) => {
-  try {
-    // Asegúrate de que la biblioteca jsPDF está disponible
-    if (typeof window.jspdf === "undefined") {
-      alert(
-        "La biblioteca jsPDF no está cargada. Verifica que esté incluida en tu proyecto."
-      );
-      return;
-    }
+// const generarPDF = (destinatario) => {
+//   try {
+//     // Asegúrate de que la biblioteca jsPDF está disponible
+//     if (typeof window.jspdf === "undefined") {
+//       alert(
+//         "La biblioteca jsPDF no está cargada. Verifica que esté incluida en tu proyecto."
+//       );
+//       return;
+//     }
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+//     const { jsPDF } = window.jspdf;
+//     const doc = new jsPDF();
 
-    const texto = textArea.value;
-    const margenIzquierdo = 10;
-    const margenSuperior = 20;
-    const anchoLinea = 180;
+//     const texto = textArea.value;
+//     const margenIzquierdo = 10;
+//     const margenSuperior = 20;
+//     const anchoLinea = 180;
 
-    // Obtener la fecha actual en formato legible
-    const fecha = new Date();
-    const fechaFormateada = fecha.toLocaleDateString("es-ES", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+//     // Obtener la fecha actual en formato legible
+//     const fecha = new Date();
+//     const fechaFormateada = fecha.toLocaleDateString("es-ES", {
+//       year: "numeric",
+//       month: "long",
+//       day: "numeric",
+//     });
 
-    // Agregar encabezado al PDF
-    doc.setFontSize(16);
-    doc.text(`Carta para ${destinatario}`, margenIzquierdo, margenSuperior);
-    doc.setFontSize(12);
-    doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, margenSuperior + 10);
+//     // Agregar encabezado al PDF
+//     doc.setFontSize(16);
+//     doc.text(`Carta para ${destinatario}`, margenIzquierdo, margenSuperior);
+//     doc.setFontSize(12);
+//     doc.text(`Fecha: ${fechaFormateada}`, margenIzquierdo, margenSuperior + 10);
 
-    // Dividir el texto en líneas y agregarlo al PDF
-    const lineas = doc.splitTextToSize(texto, anchoLinea);
-    doc.text(lineas, margenIzquierdo, margenSuperior + 20);
+//     // Dividir el texto en líneas y agregarlo al PDF
+//     const lineas = doc.splitTextToSize(texto, anchoLinea);
+//     doc.text(lineas, margenIzquierdo, margenSuperior + 20);
 
-    // Generar el nombre del archivo
-    const nombreArchivo = `Carta_${destinatario}_${
-      fecha.toISOString().split("T")[0]
-    }.pdf`;
+//     // Generar el nombre del archivo
+//     const nombreArchivo = `Carta_${destinatario}_${
+//       fecha.toISOString().split("T")[0]
+//     }.pdf`;
 
-    // Descargar el archivo
-    doc.save(nombreArchivo);
+//     // Descargar el archivo
+//     doc.save(nombreArchivo);
 
-    console.log(`PDF generado exitosamente: ${nombreArchivo}`);
-  } catch (error) {
-    console.error("Error al generar el PDF:", error);
-    alert(
-      "Ocurrió un error al generar el PDF. Verifica la consola para más detalles."
-    );
-  }
-};
+//     console.log(`PDF generado exitosamente: ${nombreArchivo}`);
+//   } catch (error) {
+//     console.error("Error al generar el PDF:", error);
+//     alert(
+//       "Ocurrió un error al generar el PDF. Verifica la consola para más detalles."
+//     );
+//   }
+// };
 
 const sendMail = async (to, name, imagen) => {
   console.log("sending email");
@@ -431,7 +441,8 @@ btnEnviarMama.addEventListener("click", () => {
   if (selectedTheme) {
     generarImagen(destinatarioSeleccionado);
   } else {
-    generarPDF(destinatarioSeleccionado);
+    // generarPDF(destinatarioSeleccionado);
+    alert("No se a seleccionado tema.");
   }
   cerrarModalEnviar();
 });
@@ -441,7 +452,8 @@ btnEnviarPapa.addEventListener("click", () => {
   if (selectedTheme) {
     generarImagen(destinatarioSeleccionado);
   } else {
-    generarPDF(destinatarioSeleccionado);
+    // generarPDF(destinatarioSeleccionado);
+    alert("No se a seleccionado tema.");
   }
   cerrarModalEnviar();
 });
