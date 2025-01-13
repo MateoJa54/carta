@@ -20,7 +20,8 @@ body {
 }
 
 .informacion {
-    margin-right: 2rem;
+    margin-left: 1rem;
+    margin-right: 1.5rem;
     padding: 25px;
     width: 870px;
     background-color: #ffe1ad; 
@@ -386,6 +387,34 @@ button img:hover {
 }
 
 .aside-destinatario p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.aside-derecha {
+    background-color: #fff9ed;
+    border: 1px solid tomato;
+    margin-left: 0px;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; 
+}
+
+.aside-derecha button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.aside-derecha img {
+    width: 5rem;
+    height: 5rem;
+    margin-bottom: 5px;
+}
+
+.aside-derecha p {
     font-size: 1.1rem;
     margin: 0;
 }
