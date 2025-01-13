@@ -614,6 +614,7 @@ const sonidos = {
   agregar: new Audio("./Audio/Agregar.mp3"),
   elegir: new Audio("./Audio/Elegir.mp3"),
   bienvenido: new Audio("./Audio/Bienvenido.mp3"),
+  letras: new Audio("./Audio/Letras.mp3"),
 };
 
 // Función para detener sonidos en reproducción
@@ -653,6 +654,10 @@ document.getElementById("btnListen").addEventListener("mouseenter", () => {
 document.getElementById("btnTheme").addEventListener("mouseenter", () => {
   detenerSonidos();
   sonidos.temas.play();
+});
+document.getElementById("btnletter").addEventListener("mouseenter", () => {
+  detenerSonidos();
+  sonidos.letras.play();
 });
 document
   .getElementById("btnAgregarDestinatario")
