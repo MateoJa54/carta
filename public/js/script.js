@@ -244,7 +244,93 @@ const abrirModalTemas = () => {
 const cerrarModalTemas = () => {
   modalTemas.style.display = "none";
 };
+const fonts = [
+  {
+      name: 'Arial',
+      class: 'font-arial'
+  },
+  {
+      name: 'Times New Roman',
+      class: 'font-times'
+  },
+  {
+      name: 'Georgia',
+      class: 'font-georgia'
+  },
+  {
+      name: 'Verdana',
+      class: 'font-verdana'
+  },
+  {
+      name: 'Courier New',
+      class: 'font-courier'
+  }
+];
 
+// Elementos del DOM
+const btnLetter = document.getElementById('btnletter');
+
+// Crear el modal y agregarlo al DOM
+const modalFonts = document.createElement('div');
+modalFonts.className = 'modal-fonts';
+modalFonts.innerHTML = `
+  <div class="modal-content">
+      <button id="btnCerrarFonts" class="btn-cerrar">&times;</button>
+      <div id="modalFontsButtons" class="modal-fonts-buttons"></div>
+  </div>
+`;
+document.body.appendChild(modalFonts);
+
+const modalFontsButtons = document.getElementById('modalFontsButtons');
+const btnCerrarFonts = document.getElementById('btnCerrarFonts');
+
+// Función para abrir el modal de fuentes
+const abrirModalFonts = () => {
+  if (btnLetter.disabled) return; // No abrir si el botón está deshabilitado
+
+  modalFontsButtons.innerHTML = '';
+
+  fonts.forEach((font) => {
+      const boton = document.createElement('button');
+      boton.className = 'font-button ' + font.class;
+      boton.style.fontFamily = font.name;
+      boton.textContent = font.name;
+      
+      boton.addEventListener('click', () => {
+          selectedFont = font;
+          // Remover todas las clases de fuentes anteriores
+          fonts.forEach(f => textArea.classList.remove(f.class));
+          // Agregar la nueva clase de fuente
+          textArea.classList.add(font.class);
+          
+          cerrarModalFonts();
+          // Si tienes una función para actualizar estados, la llamarías aquí
+          if (typeof actualizarEstadoBotones === 'function') {
+              actualizarEstadoBotones();
+          }
+      });
+      
+      modalFontsButtons.appendChild(boton);
+  });
+
+  modalFonts.style.display = 'flex';
+};
+
+// Función para cerrar el modal de fuentes
+const cerrarModalFonts = () => {
+  modalFonts.style.display = 'none';
+};
+
+// Event listeners
+btnLetter.addEventListener('click', abrirModalFonts);
+btnCerrarFonts.addEventListener('click', cerrarModalFonts);
+
+// Cerrar modal al hacer clic fuera de él
+modalFonts.addEventListener('click', (e) => {
+  if (e.target === modalFonts) {
+      cerrarModalFonts();
+  }
+});
 // Event listeners for theme modal
 btnTheme.addEventListener("click", abrirModalTemas);
 btnCerrarTemas.addEventListener("click", cerrarModalTemas);

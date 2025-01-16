@@ -565,3 +565,77 @@ button img:hover {
 .pink-theme{
     background-image: url('./../img/temas/divertido-nina.jpeg');
 }
+.modal-fonts {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    max-width: 500px;
+    width: 90%;
+}
+
+.modal-fonts-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.font-button {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.font-button:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+}
+
+.btn-cerrar {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+/* Clases para las diferentes fuentes */
+.font-arial {
+    font-family: Arial, sans-serif;
+}
+
+.font-times {
+    font-family: "Times New Roman", Times, serif;
+}
+
+.font-georgia {
+    font-family: Georgia, serif;
+}
+
+.font-verdana {
+    font-family: Verdana, sans-serif;
+}
+
+.font-courier {
+    font-family: "Courier New", Courier, monospace;
+}
