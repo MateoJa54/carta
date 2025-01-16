@@ -337,14 +337,14 @@ btnCerrarTemas.addEventListener("click", cerrarModalTemas);
 
 // Modify the save functionality to generate an image instead of PDF
 const generarImagen = (destinatario) => {
-    if (dataDestinatarios[destinatario].correo === "") {
-        alert("No se ha encontrado información del destinatario.");
-        return;
-    }
+  if (dataDestinatarios[destinatario].correo === "") {
+      alert("No se ha encontrado información del destinatario.");
+      return;
+  }
 
   if (textArea.value.trim() === "") {
-    alert("No hay texto para guardar.");
-    return;
+      alert("No hay texto para guardar.");
+      return;
   }
 
   // Create a canvas to draw the letter
@@ -355,67 +355,68 @@ const generarImagen = (destinatario) => {
 
   // Fill background with theme image if selected
   if (selectedTheme) {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      // Draw theme image (scaled and centered)
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+          // Draw theme image (scaled and centered)
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // Add text overlay
-      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-      ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
+          // Add text overlay
+          ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+          ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
 
-      // Text styling
-      ctx.font = "20px Arial";
-      ctx.fillStyle = "black";
+          // Text styling
+          const fontFamily = selectedFont ? selectedFont.name : "Arial";
 
-      // Add header
-      ctx.font = "bold 24px Arial";
-      ctx.fillText(`Carta para ${destinatario}`, 60, 90);
+          // Add header
+          ctx.font = `bold 24px ${fontFamily}`;
+          ctx.fillStyle = "black";
+          ctx.fillText(`Carta para ${destinatario}`, 60, 90);
 
-      // Add date
-      ctx.font = "16px Arial";
-      const fecha = new Date().toLocaleDateString("es-ES", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      ctx.fillText(`Fecha: ${fecha}`, 60, 120);
+          // Add date
+          ctx.font = `16px ${fontFamily}`;
+          const fecha = new Date().toLocaleDateString("es-ES", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+          });
+          ctx.fillText(`Fecha: ${fecha}`, 60, 120);
 
-      // Add main text
-      ctx.font = "16px Arial";
-      const lineas = wrapText(
-        ctx,
-        textArea.value,
-        60,
-        160,
-        canvas.width - 120,
-        25
-      );
+          // Add main text
+          ctx.font = `16px ${fontFamily}`;
+          const lineas = wrapText(
+              ctx,
+              textArea.value,
+              60,
+              160,
+              canvas.width - 120,
+              25
+          );
 
-      // Generate filename
-      const nombreArchivo = `Carta_${destinatario}_${
-        new Date().toISOString().split("T")[0]
-      }.png`;
+          // Generate filename
+          const nombreArchivo = `Carta_${destinatario}_${
+              new Date().toISOString().split("T")[0]
+          }.png`;
 
-      // Convert to image and download
-      const imagenURL = canvas.toDataURL("image/png");
-      const enlaceDescarga = document.createElement("a");
-      enlaceDescarga.href = imagenURL;
-      enlaceDescarga.download = nombreArchivo;
-      const destinatarioObj = dataDestinatarios[destinatario];
-      sendMail(destinatarioObj.correo, destinatarioObj.nombre, imagenURL);
-    console.log("sending email" + destinatario);
-      enlaceDescarga.click();
+          // Convert to image and download
+          const imagenURL = canvas.toDataURL("image/png");
+          const enlaceDescarga = document.createElement("a");
+          enlaceDescarga.href = imagenURL;
+          enlaceDescarga.download = nombreArchivo;
+          const destinatarioObj = dataDestinatarios[destinatario];
+          sendMail(destinatarioObj.correo, destinatarioObj.nombre, imagenURL);
+          console.log("sending email" + destinatario);
+          enlaceDescarga.click();
 
-      //return the image in base64
-    };
-    img.src = selectedTheme.image;
+          //return the image in base64
+      };
+      img.src = selectedTheme.image;
   } else {
-    // Fallback if no theme selected
-    alert("Por favor, selecciona un tema antes de guardar.");
+      // Fallback if no theme selected
+      alert("Por favor, selecciona un tema antes de guardar.");
   }
 };
+
 
 // Helper function to wrap text on canvas
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
