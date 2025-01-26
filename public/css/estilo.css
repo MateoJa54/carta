@@ -367,11 +367,11 @@ button img:hover {
 }
 
 .aside-destinatario {
-    background-color: #fff9ed;
-    border: 1px solid tomato;
+    background-color: #ffe1ad;
+    border: 1px solid rgb(255, 230, 227);
     border-radius: 8px;
     padding: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .aside-destinatario button {
@@ -389,15 +389,21 @@ button img:hover {
 .aside-destinatario p {
     font-size: 1.1rem;
     margin: 0;
+    font-family: 'Comic Sans MS', 'Arial', sans-serif;
+    font-weight: bold;
+}
+
+.aside .boton{
+    width: 7.8rem;
 }
 
 .aside-derecha {
-    background-color: #fff9ed;
-    border: 1px solid tomato;
+    background-color: #ffe1ad;
+    border: 1px solid rgb(255, 230, 227);
     margin-left: 0px;
     border-radius: 8px;
     padding: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column; 
 }
