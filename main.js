@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -7,6 +6,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
+const fs = require('fs'); 
+const path = require('path');
 
 
 const EMAIL = process.env.EMAIL;
@@ -21,8 +22,8 @@ app.use(cors({
     origin: '*',
     methods: ['GET', 'POST'],
 }));
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({limit: '100mb'}));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 app.use(bodyParser.json());
 
 const transporter = nodemailer.createTransport(

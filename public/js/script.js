@@ -267,6 +267,8 @@ const fonts = [
   }
 ];
 
+let selectedFont = null;
+
 // Elementos del DOM
 const btnLetter = document.getElementById('btnletter');
 
@@ -347,74 +349,73 @@ const generarImagen = (destinatario) => {
       return;
   }
 
+  if (!selectedTheme) {
+      alert("Por favor, selecciona un tema antes de continuar.");
+      return;
+  }
+
   // Create a canvas to draw the letter
   const canvas = document.createElement("canvas");
   canvas.width = 800;
   canvas.height = 600;
   const ctx = canvas.getContext("2d");
 
-  // Fill background with theme image if selected
-  if (selectedTheme) {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-          // Draw theme image (scaled and centered)
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.onload = () => {
+    // Draw theme image (scaled and centered)
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-          // Add text overlay
-          ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-          ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
+    // Add text overlay
+    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
 
-          // Text styling
-          const fontFamily = selectedFont ? selectedFont.name : "Arial";
+    // Use selected font or default to Arial
+    const fontFamily = selectedFont ? selectedFont.name : "Roboto"; 
 
-          // Add header
-          ctx.font = `bold 24px ${fontFamily}`;
-          ctx.fillStyle = "black";
-          ctx.fillText(`Carta para ${destinatario}`, 60, 90);
+    // Add header
+    let nombreEnvio = (destinatario == 'papa') ? 'Papá' : 'Mamá';
 
-          // Add date
-          ctx.font = `16px ${fontFamily}`;
-          const fecha = new Date().toLocaleDateString("es-ES", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-          });
-          ctx.fillText(`Fecha: ${fecha}`, 60, 120);
+    ctx.font = `bold 24px ${fontFamily}`;
+    ctx.fillStyle = "black";
+    ctx.fillText(`Carta para ${nombreEnvio}`, 60, 90);
 
-          // Add main text
-          ctx.font = `16px ${fontFamily}`;
-          const lineas = wrapText(
-              ctx,
-              textArea.value,
-              60,
-              160,
-              canvas.width - 120,
-              25
-          );
+    // Add date
+    ctx.font = `16px ${fontFamily}`;
+    const fecha = new Date().toLocaleDateString("es-ES", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+    ctx.fillText(`Fecha: ${fecha}`, 60, 120);
 
-          // Generate filename
-          const nombreArchivo = `Carta_${destinatario}_${
-              new Date().toISOString().split("T")[0]
-          }.png`;
+    // Add main text
+    ctx.font = `16px ${fontFamily}`;
+    const lineas = wrapText(
+        ctx,
+        textArea.value,
+        60,
+        160,
+        canvas.width - 120,
+        25
+    );
 
-          // Convert to image and download
-          const imagenURL = canvas.toDataURL("image/png");
-          const enlaceDescarga = document.createElement("a");
-          enlaceDescarga.href = imagenURL;
-          enlaceDescarga.download = nombreArchivo;
-          const destinatarioObj = dataDestinatarios[destinatario];
-          sendMail(destinatarioObj.correo, destinatarioObj.nombre, imagenURL);
-          console.log("sending email" + destinatario);
-          enlaceDescarga.click();
+    // Generate filename
+    const nombreArchivo = `Carta_${destinatario}_${
+        new Date().toISOString().split("T")[0]
+    }.png`;
 
-          //return the image in base64
-      };
-      img.src = selectedTheme.image;
-  } else {
-      // Fallback if no theme selected
-      alert("Por favor, selecciona un tema antes de guardar.");
-  }
+    // Convert to image and download
+    const imagenURL = canvas.toDataURL("image/png");
+    const enlaceDescarga = document.createElement("a");
+    enlaceDescarga.href = imagenURL;
+    enlaceDescarga.download = nombreArchivo;
+    const destinatarioObj = dataDestinatarios[destinatario];
+    sendMail(destinatarioObj.correo, destinatarioObj.nombre, imagenURL);
+    console.log("sending email to " + destinatario);
+    enlaceDescarga.click();
+  };
+  img.src = selectedTheme.image;
 };
 
 
@@ -521,27 +522,16 @@ const sendMail = async (to, name, imagen) => {
   }
 };
 
-// Asignar eventos a los botones del modal
 btnEnviarMama.addEventListener("click", () => {
   destinatarioSeleccionado = "mama";
   console.log("should send email to mama");
-  if (selectedTheme) {
-    generarImagen(destinatarioSeleccionado);
-  } else {
-    // generarPDF(destinatarioSeleccionado);
-    alert("No se a seleccionado tema.");
-  }
+  generarImagen(destinatarioSeleccionado);
   cerrarModalEnviar();
 });
 
 btnEnviarPapa.addEventListener("click", () => {
   destinatarioSeleccionado = "papa";
-  if (selectedTheme) {
-    generarImagen(destinatarioSeleccionado);
-  } else {
-    // generarPDF(destinatarioSeleccionado);
-    alert("No se a seleccionado tema.");
-  }
+  generarImagen(destinatarioSeleccionado);
   cerrarModalEnviar();
 });
 
@@ -627,19 +617,11 @@ btnCerrarFormulario.addEventListener("click", () => {
 
 // Función para enviar destinatario al servidor
 const guardarDestinatario = async (nuevoDestinatario) => {
+  dataDestinatarios[formDestinatario.parentesco.value].nombre = formDestinatario.nombre.value;
+  dataDestinatarios[formDestinatario.parentesco.value].correo = formDestinatario.correo.value;
+  localStorage.setItem("dataDestinatarios", JSON.stringify(dataDestinatarios));
 
-
-
-
-dataDestinatarios[formDestinatario.parentesco.value].nombre = formDestinatario.nombre.value;
-
-dataDestinatarios[formDestinatario.parentesco.value].correo = formDestinatario.correo.value;
-
-localStorage.setItem("dataDestinatarios", JSON.stringify(dataDestinatarios));
-
-console.log(dataDestinatarios);
-
-
+  console.log(dataDestinatarios);
 };
 
 // Evento de envío del formulario
