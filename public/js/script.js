@@ -134,35 +134,36 @@ btnStop.addEventListener("click", detenerGrabacion);
 
 // Función para abrir el modal de confirmación
 const abrirModal = () => {
-  modalConfirmDelete.style.display = "flex";
+  modalConfirmDelete.style.display = "flex"; // Muestra el modal
 };
 
 // Función para cerrar el modal de confirmación
 const cerrarModal = () => {
-  modalConfirmDelete.style.display = "none";
+  modalConfirmDelete.style.display = "none"; // Oculta el modal
 };
 
-// Función para limpiar el texto (con modal)
+// Evento del botón "Eliminar" (btnClear)
 btnClear.addEventListener("click", () => {
-  if (isRecording || textArea.value.trim() === ""){
+  if (isRecording || textArea.value.trim() === "") {
     alert("No hay texto que borrar");
     return;
-  } 
-  textArea.value = "";
-  actualizarEstadoBotones();
+  }
+  
+  abrirModal(); // Abre el modal de confirmación
 });
 
 // Confirmar la acción de borrar
 btnConfirmDelete.addEventListener("click", () => {
-  textArea.value = ""; // Limpiar el área de texto
-  cerrarModal(); // Cerrar el modal después de borrar el texto
-  actualizarEstadoBotones(); // Actualizar el estado de los botones
+  textArea.value = ""; // Limpia el área de texto
+  cerrarModal(); // Cierra el modal después de borrar el texto
+  actualizarEstadoBotones(); // Actualiza el estado de los botones
 });
 
 // Cancelar la acción de borrar
 btnCancelDelete.addEventListener("click", () => {
-  cerrarModal(); // Cerrar el modal sin borrar el texto
+  cerrarModal(); // Cierra el modal sin borrar el texto
 });
+
 
 // Nuevo modal de envío
 const modalEnviar = document.getElementById("modalEnviar");
