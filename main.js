@@ -6,9 +6,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
-const fs = require('fs'); 
-const path = require('path');
-
 
 const EMAIL = process.env.EMAIL;
 const PASSWD = process.env.PASSWD;
