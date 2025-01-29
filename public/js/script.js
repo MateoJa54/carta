@@ -338,24 +338,40 @@ modalFonts.addEventListener('click', (e) => {
 btnTheme.addEventListener("click", abrirModalTemas);
 btnCerrarTemas.addEventListener("click", cerrarModalTemas);
 
-// Modify the save functionality to generate an image instead of PDF
+// Add to existing data structure at the top of script.js
+let letterHistory = JSON.parse(localStorage.getItem("letterHistory")) || [];
+
+// Add new function to save letter to history
+const saveLetterToHistory = (destinatario, imagen) => {
+  const letter = {
+    id: Date.now(), // Unique identifier
+    date: new Date().toISOString(),
+    destinatario: destinatario,
+    imagen: imagen,
+    texto: textArea.value
+  };
+  
+  letterHistory.push(letter);
+  localStorage.setItem("letterHistory", JSON.stringify(letterHistory));
+};
+
+// Update the generarImagen function to save to history
 const generarImagen = (destinatario) => {
   if (dataDestinatarios[destinatario].correo === "") {
-      alert("No se ha encontrado información del destinatario.");
-      return;
+    alert("No se ha encontrado información del destinatario.");
+    return;
   }
 
   if (textArea.value.trim() === "") {
-      alert("No hay texto para guardar.");
-      return;
+    alert("No hay texto para guardar.");
+    return;
   }
 
   if (!selectedTheme) {
-      alert("Por favor, selecciona un tema antes de continuar.");
-      return;
+    alert("Por favor, selecciona un tema antes de continuar.");
+    return;
   }
 
-  // Create a canvas to draw the letter
   const canvas = document.createElement("canvas");
   canvas.width = 800;
   canvas.height = 600;
@@ -364,61 +380,118 @@ const generarImagen = (destinatario) => {
   const img = new Image();
   img.crossOrigin = "anonymous";
   img.onload = () => {
-    // Draw theme image (scaled and centered)
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    // Add text overlay
     ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
     ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
 
-    // Use selected font or default to Arial
-    const fontFamily = selectedFont ? selectedFont.name : "Roboto"; 
+    const fontFamily = selectedFont ? selectedFont.name : "Roboto";
 
-    // Add header
     let nombreEnvio = (destinatario == 'papa') ? 'Papá' : 'Mamá';
-
     ctx.font = `bold 24px ${fontFamily}`;
     ctx.fillStyle = "black";
     ctx.fillText(`Carta para ${nombreEnvio}`, 60, 90);
 
-    // Add date
     ctx.font = `16px ${fontFamily}`;
     const fecha = new Date().toLocaleDateString("es-ES", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
     ctx.fillText(`Fecha: ${fecha}`, 60, 120);
 
-    // Add main text
     ctx.font = `16px ${fontFamily}`;
-    const lineas = wrapText(
-        ctx,
-        textArea.value,
-        60,
-        160,
-        canvas.width - 120,
-        25
-    );
+    const lineas = wrapText(ctx, textArea.value, 60, 160, canvas.width - 120, 25);
 
-    // Generate filename
-    const nombreArchivo = `Carta_${destinatario}_${
-        new Date().toISOString().split("T")[0]
-    }.png`;
-
-    // Convert to image and download
+    const nombreArchivo = `Carta_${destinatario}_${new Date().toISOString().split("T")[0]}.png`;
     const imagenURL = canvas.toDataURL("image/png");
+    
+    // Save to history before sending
+    saveLetterToHistory(destinatario, imagenURL);
+    
     const enlaceDescarga = document.createElement("a");
     enlaceDescarga.href = imagenURL;
     enlaceDescarga.download = nombreArchivo;
     const destinatarioObj = dataDestinatarios[destinatario];
     sendMail(destinatarioObj.correo, destinatarioObj.nombre, imagenURL);
-    console.log("sending email to " + destinatario);
     enlaceDescarga.click();
   };
   img.src = selectedTheme.image;
 };
 
+// Add HTML for history button and modal
+document.querySelector('.historial').innerHTML += `
+  <div class="boton">
+    <button id="btnHistory" title="Historial">
+      <img src="img/history.png" alt="Historial">
+    </button>
+    <p>Historial</p>
+  </div>
+
+  <div class="modal" id="modalHistory">
+    <div class="modal-content">
+      <h2>Historial de Cartas</h2>
+      <div id="lettersList" class="letters-list"></div>
+      <button id="btnCloseHistory" class="cerrar-modal">Cerrar</button>
+    </div>
+  </div>
+`;
+
+// Add history functionality
+const btnHistory = document.getElementById('btnHistory');
+const modalHistory = document.getElementById('modalHistory');
+const btnCloseHistory = document.getElementById('btnCloseHistory');
+const lettersList = document.getElementById('lettersList');
+
+const showHistory = () => {
+  lettersList.innerHTML = '';
+  letterHistory.reverse().forEach(letter => {
+    const date = new Date(letter.date).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const letterElement = document.createElement('div');
+    letterElement.className = 'letter-item';
+    letterElement.innerHTML = `
+      <div class="letter-info">
+        <strong>Fecha:</strong> ${date}<br>
+        <strong>Destinatario:</strong> ${letter.destinatario === 'papa' ? 'Papá' : 'Mamá'}<br>
+        <strong>Texto:</strong> ${letter.texto.substring(0, 100)}...
+      </div>
+      <img src="${letter.imagen}" alt="Vista previa de la carta">
+      <div class="letter-actions">
+        <button onclick="downloadLetter('${letter.id}')">Descargar</button>
+        <button onclick="deleteLetter('${letter.id}')">Eliminar</button>
+      </div>
+    `;
+    lettersList.appendChild(letterElement);
+  });
+  modalHistory.style.display = 'flex';
+};
+
+const downloadLetter = (id) => {
+  const letter = letterHistory.find(l => l.id === parseInt(id));
+  if (letter) {
+    const link = document.createElement('a');
+    link.href = letter.imagen;
+    link.download = `Carta_${letter.destinatario}_${new Date(letter.date).toISOString().split('T')[0]}.png`;
+    link.click();
+  }
+};
+
+const deleteLetter = (id) => {
+  if (confirm('¿Estás seguro de eliminar esta carta?')) {
+    letterHistory = letterHistory.filter(l => l.id !== parseInt(id));
+    localStorage.setItem("letterHistory", JSON.stringify(letterHistory));
+    showHistory();
+  }
+};
+
+btnHistory.addEventListener('click', showHistory);
+btnCloseHistory.addEventListener('click', () => {
+  modalHistory.style.display = 'none';
+});
 
 // Helper function to wrap text on canvas
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
