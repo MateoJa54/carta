@@ -660,11 +660,15 @@ btnListen.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const btnAgregarDestinatario = document.getElementById(
-    "btnAgregarDestinatario"
-  );
+  const btnAgregarDestinatario = document.getElementById("btnAgregarDestinatario");
   const modalDestinatario = document.getElementById("modalDestinatario");
   const btnCerrarFormulario = document.getElementById("btnCerrarFormulario");
+  const formDestinatario = document.getElementById("formDestinatario");
+  const btnGuardar = formDestinatario.querySelector('button[type="submit"]'); // Botón Guardar/Editar
+  const selectParentesco = document.getElementById("parentesco");
+
+  // Cargar destinatarios guardados desde localStorage
+  let dataDestinatarios = JSON.parse(localStorage.getItem("dataDestinatarios")) || {};
 
   // Abrir el modal
   btnAgregarDestinatario.addEventListener("click", () => {
@@ -682,17 +686,27 @@ document.addEventListener("DOMContentLoaded", () => {
       modalDestinatario.style.display = "none";
     }
   });
-});
 
-// Función para cerrar el modal del formulario
-btnCerrarFormulario.addEventListener("click", () => {
-  modalDestinatario.style.display = "none";
+  // Cambiar el texto del botón según el destinatario seleccionado
+  selectParentesco.addEventListener("change", () => {
+    const parentescoSeleccionado = selectParentesco.value;
+    
+    // Si el destinatario ya ha sido guardado al menos una vez, cambiar el botón a "Editar"
+    if (dataDestinatarios[parentescoSeleccionado]) {
+      btnGuardar.textContent = "Editar";
+    } else {
+      btnGuardar.textContent = "Guardar";
+    }
+  });
 });
 
 // Función para enviar destinatario al servidor
 const guardarDestinatario = async (nuevoDestinatario) => {
-  dataDestinatarios[formDestinatario.parentesco.value].nombre = formDestinatario.nombre.value;
-  dataDestinatarios[formDestinatario.parentesco.value].correo = formDestinatario.correo.value;
+  // Guardar datos en localStorage sin cambiar la estructura original del código
+  dataDestinatarios[formDestinatario.parentesco.value] = {
+    nombre: formDestinatario.nombre.value,
+    correo: formDestinatario.correo.value
+  };
   localStorage.setItem("dataDestinatarios", JSON.stringify(dataDestinatarios));
 
   console.log(dataDestinatarios);
@@ -712,10 +726,15 @@ formDestinatario.addEventListener("submit", async (event) => {
   // Enviar destinatario al servidor
   await guardarDestinatario(nuevoDestinatario);
 
+  // Cambiar el botón a "Editar" después de guardar
+  document.querySelector('button[type="submit"]').textContent = "Editar";
+
   // Limpiar el formulario y cerrar el modal
   formDestinatario.reset();
   modalDestinatario.style.display = "none";
 });
+
+
 
 const enviarCarta = async (destinatario) => {
   try {
