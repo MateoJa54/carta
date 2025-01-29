@@ -664,8 +664,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalDestinatario = document.getElementById("modalDestinatario");
   const btnCerrarFormulario = document.getElementById("btnCerrarFormulario");
   const formDestinatario = document.getElementById("formDestinatario");
-  const btnGuardar = formDestinatario.querySelector('button[type="submit"]'); // Botón Guardar/Editar
+  const btnGuardar = formDestinatario.querySelector('button[type="submit"]');
   const selectParentesco = document.getElementById("parentesco");
+  
+  // Contenedor de mensajes
+  const mensajeDiv = document.createElement("div");
+  mensajeDiv.id = "mensaje";
+  mensajeDiv.style.position = "fixed";
+  mensajeDiv.style.bottom = "20px";
+  mensajeDiv.style.left = "50%";
+  mensajeDiv.style.transform = "translateX(-50%)";
+  mensajeDiv.style.padding = "10px 20px";
+  mensajeDiv.style.borderRadius = "5px";
+  mensajeDiv.style.color = "#fff";
+  mensajeDiv.style.fontSize = "16px";
+  mensajeDiv.style.display = "none";
+  document.body.appendChild(mensajeDiv);
+
+  // Función para mostrar mensajes
+  function mostrarMensaje(texto, color) {
+    mensajeDiv.textContent = texto;
+    mensajeDiv.style.backgroundColor = color;
+    mensajeDiv.style.display = "block";
+    setTimeout(() => {
+      mensajeDiv.style.display = "none";
+    }, 3000);
+  }
 
   // Cargar destinatarios guardados desde localStorage
   let dataDestinatarios = JSON.parse(localStorage.getItem("dataDestinatarios")) || {};
@@ -673,6 +697,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Abrir el modal
   btnAgregarDestinatario.addEventListener("click", () => {
     modalDestinatario.style.display = "flex";
+    // Resetear el formulario y el texto del botón al abrir el modal
+    formDestinatario.reset();
+    btnGuardar.textContent = "Agregar";
   });
 
   // Cerrar el modal
@@ -690,32 +717,46 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cambiar el texto del botón según el destinatario seleccionado
   selectParentesco.addEventListener("change", () => {
     const parentescoSeleccionado = selectParentesco.value;
+    const destinatarioExistente = dataDestinatarios[parentescoSeleccionado];
     
-    // Si el destinatario ya ha sido guardado al menos una vez, cambiar el botón a "Editar"
-    if (dataDestinatarios[parentescoSeleccionado]) {
+    if (destinatarioExistente) {
       btnGuardar.textContent = "Editar";
+      // Rellenar el formulario con los datos existentes
+      formDestinatario.nombre.value = destinatarioExistente.nombre;
+      formDestinatario.correo.value = destinatarioExistente.correo;
     } else {
-      btnGuardar.textContent = "Guardar";
+      btnGuardar.textContent = "Agregar";
+      // Limpiar los campos si no hay datos existentes
+      formDestinatario.nombre.value = "";
+      formDestinatario.correo.value = "";
     }
   });
 });
 
 // Función para enviar destinatario al servidor
 const guardarDestinatario = async (nuevoDestinatario) => {
-  // Guardar datos en localStorage sin cambiar la estructura original del código
-  dataDestinatarios[formDestinatario.parentesco.value] = {
+  const parentesco = formDestinatario.parentesco.value;
+  const esEdicion = !!dataDestinatarios[parentesco];
+
+  // Guardar datos en localStorage
+  dataDestinatarios[parentesco] = {
     nombre: formDestinatario.nombre.value,
     correo: formDestinatario.correo.value
   };
   localStorage.setItem("dataDestinatarios", JSON.stringify(dataDestinatarios));
 
+  // Mostrar mensaje según si es "Agregar" o "Editar"
+  mostrarMensaje(
+    esEdicion ? "Destinatario editado correctamente." : "Destinatario guardado correctamente.",
+    esEdicion ? "#007BFF" : "#28A745"
+  );
   console.log(dataDestinatarios);
 };
 
 // Evento de envío del formulario
 formDestinatario.addEventListener("submit", async (event) => {
   event.preventDefault();
-
+  
   // Obtener datos del formulario
   const nuevoDestinatario = {
     nombre: formDestinatario.nombre.value,
@@ -725,9 +766,6 @@ formDestinatario.addEventListener("submit", async (event) => {
 
   // Enviar destinatario al servidor
   await guardarDestinatario(nuevoDestinatario);
-
-  // Cambiar el botón a "Editar" después de guardar
-  document.querySelector('button[type="submit"]').textContent = "Editar";
 
   // Limpiar el formulario y cerrar el modal
   formDestinatario.reset();
