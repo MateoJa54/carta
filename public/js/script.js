@@ -422,7 +422,7 @@ const generarImagen = (destinatario) => {
 document.querySelector('.historial').innerHTML += `
   <div class="boton">
     <button id="btnHistory" title="Historial">
-      <img src="img/history.png" alt="Historial">
+      <img src="img/historial.jpg" alt="Historial">
     </button>
     <p>Historial</p>
   </div>
