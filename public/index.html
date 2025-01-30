@@ -12,9 +12,12 @@
 
 <body>
     <div class="contenedor">
-        <div class="aside-izquierda">
+        <div class="aside aside-historial">
             <aside class="historial">
             </aside>
+        </div>
+
+        <div class="aside">
             <aside class="aside-destinatario">
                 <div class="boton">
                     <button id="btnAgregarDestinatario" title="Agregar Destinatario">
@@ -24,8 +27,6 @@
                 </div>
             </aside>
         </div>
-        
-        
         <div class="informacion">
             
             <h1>¡Crea tu carta hablando!</h1>
@@ -79,25 +80,23 @@
                 </div>
 
             </div>
-            
         </div>
-        <div class="aside-derecha">
-            <div class="boton">
-                <button id="btnletter" title="Letras">
-                    <img src="img/Letras.png" alt="Letras">
-                </button>
-                <p>Tipo de Letras</p>
-            </div>
-            <div class="boton">
-                <button id="btnTheme" title="Temas">
-                    <img src="img/tema.jpg" alt="Temas">
-                </button>
-                <p>Temas</p>
-            </div>
+        <div class="aside2">
+            <aside class="aside-derecha">
+                <div class="boton">
+                    <button id="btnletter" title="Letras" ><img src="img/Letras.png"
+                            alt="Letras"></button>
+                    <p>Tipo de Letras</p>
+                </div>
+                <div class="boton">
+                    <button id="btnTheme" title="Temas"><img src="img/tema.jpg" alt="Temas"></button>
+                    <p>Temas</p>
+                </div>
+
+            </aside>
         </div>
-        
     </div>
-    
+
     <div class="modal" id="modalConfirmDelete">
         <div class="modal-content">
             <h2>¿Estás seguro de borrar el texto?</h2>
@@ -123,7 +122,7 @@
             <button id="btnCerrarEnviar" class="cerrar-modal">Cerrar</button>
         </div>
     </div>
-    
+
     <!-- Nuevo modal para temas -->
     <div class="modal" id="modalTemas">
         <div class="modal-content">

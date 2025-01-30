@@ -362,28 +362,16 @@ button img:hover {
     transform: scale(1.05);
 }
 
-.aside-izquierda {
-    background-color: #ffe1ad;
-    border: 1px solid rgb(255, 230, 227);
-    border-radius: 8px;
-    padding: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    gap: 10px; /* Espacio entre elementos */
-}
-
-.historial {
-    width: 100%;
-    min-height: 100px;
-    border-radius: 5px;
-    padding: 10px;
-    overflow-y: auto;
-    max-height: 300px; /* Ajusta la altura máxima */
+.aside{
+    margin-left: 3.5rem;
 }
 
 .aside-destinatario {
-    text-align: center;
+    background-color: #ffe1ad;
+    border: 1px solid rgb(255, 230, 227);
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .aside-destinatario button {
@@ -405,15 +393,19 @@ button img:hover {
     font-weight: bold;
 }
 
+.aside .boton{
+    width: 7.8rem;
+}
+
 .aside-derecha {
     background-color: #ffe1ad;
     border: 1px solid rgb(255, 230, 227);
+    margin-left: 0px;
     border-radius: 8px;
     padding: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: column; 
 }
 
 .aside-derecha button {
@@ -431,6 +423,12 @@ button img:hover {
 .aside-derecha p {
     font-size: 1.1rem;
     margin: 0;
+}
+
+.historial{
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 /* Estilos para el historial de cartas */
@@ -474,24 +472,20 @@ button img:hover {
 }
 
 .letter-actions button:hover {
-    background-color: darkred;
+    background-color: tomato;
 }
 
 @media (max-width: 768px) {
     .contenedor {
-        flex-direction: column;
+        flex-direction: column; 
         height: auto;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
+        align-items: center; 
+        gap: 1rem; 
+        padding: 1rem; 
     }
-
-    .aside-izquierda, .aside-derecha {
-        width: 200%;
-    }
-
+    
     .aside-derecha {
-        flex-direction: row;
+        flex-direction: row; /* Mantiene los botones en horizontal */
         justify-content: center;
         gap: 0.5rem;
     }
@@ -515,14 +509,14 @@ button img:hover {
     }
 
     .aside {
-        margin: 0;
-        text-align: center;
+        margin: 0; 
+        text-align: center; 
     }
 
     .informacion {
-        margin: 0 auto;
-        width: 95%;
-        padding: 1.1rem;
+        margin: 0 auto; 
+        width: 95%; 
+        padding: 1.1rem; 
     }
 }
 
@@ -532,21 +526,21 @@ button img:hover {
     }
 
     .botones {
-        align-items: center;
-        gap: 0.5rem;
+        align-items: center; /* Centrar botones */
+        gap: 0.5rem; /* Espaciado entre botones */
     }
 
     .boton {
         width: 65px;
     }
 
-    .boton p {
+    .boton p{
         font-size: 0.9rem;
     }
 
     .aside {
-        margin: 0 auto;
-        text-align: center;
+        margin: 0 auto; /* Centrar el aside */
+        text-align: center; /* Centrar contenido */
     }
 
     .aside-destinatario p {
@@ -554,12 +548,11 @@ button img:hover {
     }
 
     .informacion {
-        margin: 0 auto;
-        width: 95%;
-        padding: 1rem;
+        margin: 0 auto; /* Centrar información */
+        width: 95%; /* Ajustar ancho */
+        padding: 1rem; /* Agregar espacio interno */
     }
 }
-
 
 /*estilos para tema*/
 .d-none{
