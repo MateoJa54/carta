@@ -59,10 +59,13 @@ const modalDestinatario = document.getElementById("modalDestinatario");
 const btnCerrarFormulario = document.getElementById("btnCerrarFormulario");
 
 // Configuración del reconocimiento de voz
-const recognition = new (window.SpeechRecognition ||
-  window.webkitSpeechRecognition)();
-recognition.continuous = true;
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.continuous = true; // Sigue escuchando sin detenerse
+recognition.interimResults = true; // Muestra el texto en tiempo real
 recognition.lang = "es-ES";
+
+let finalTranscript = ""; // Texto confirmado
+
 
 let isRecording = false; // Estado de grabación
 let progressTimeout; // Control del timeout de progreso
@@ -155,6 +158,7 @@ btnClear.addEventListener("click", () => {
 // Confirmar la acción de borrar
 btnConfirmDelete.addEventListener("click", () => {
   textArea.value = ""; // Limpia el área de texto
+  finalTranscript = "";
   cerrarModal(); // Cierra el modal después de borrar el texto
   actualizarEstadoBotones(); // Actualiza el estado de los botones
 });
@@ -623,22 +627,20 @@ btnSave.addEventListener("click", () => {
 
 // Agregar texto reconocido al área de texto en tiempo real
 recognition.onresult = (event) => {
-  let textoTemporal = "";
-  for (let i = event.resultIndex; i < event.results.length; i++) {
-    const resultado = event.results[i];
-    textoTemporal += resultado[0].transcript;
+  let interimTranscript = ""; // Texto en vivo
 
-    if (resultado.isFinal) {
-      textArea.value += textoTemporal + " ";
-      textoTemporal = "";
+  for (let i = event.resultIndex; i < event.results.length; i++) {
+    let transcript = event.results[i][0].transcript;
+
+    if (event.results[i].isFinal) {
+      finalTranscript += transcript + " "; // Se confirma el texto
+    } else {
+      interimTranscript += transcript + " "; // Texto provisional en vivo
     }
   }
 
-  if (textoTemporal) {
-    textArea.placeholder = textoTemporal;
-  }
-
-  actualizarEstadoBotones();
+  // Se actualiza el textarea en tiempo real
+  textArea.value = finalTranscript + interimTranscript;
 };
 
 // Manejo de errores
