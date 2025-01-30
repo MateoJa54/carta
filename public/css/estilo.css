@@ -483,6 +483,12 @@ button img:hover {
         gap: 1rem; 
         padding: 1rem; 
     }
+    
+    .aside-derecha {
+        flex-direction: row; /* Mantiene los botones en horizontal */
+        justify-content: center;
+        gap: 0.5rem;
+    }
 
     h1 {
         font-size: 24px;
@@ -525,7 +531,7 @@ button img:hover {
     }
 
     .boton {
-        width: 70px;
+        width: 65px;
     }
 
     .boton p{
@@ -534,7 +540,6 @@ button img:hover {
 
     .aside {
         margin: 0 auto; /* Centrar el aside */
-        width: 100%; /* Asegurar ancho completo */
         text-align: center; /* Centrar contenido */
     }
 
