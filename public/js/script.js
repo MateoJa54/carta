@@ -91,25 +91,25 @@ dateOfToday.innerHTML = new Date().toLocaleDateString("es-ES", {
 btnStart.addEventListener("click", () => {
   if (isRecording) return;
 
-  isRecording = true;
-  textArea.placeholder = "Escuchando...";
-  recognition.start();
+  setTimeout(() => {
+    isRecording = true;
+    textArea.placeholder = "Escuchando...";
+    recognition.start();
 
-  // Mostrar indicadores visuales de grabación
-  recordingIndicator.style.display = "block";
-  recordingText.style.display = "block";
-  progressFill.style.width = "0";
+    recordingIndicator.style.display = "block";
+    recordingText.style.display = "block";    progressFill.style.width = "0";
 
-  // Animar la barra de progreso
-  progressFill.style.transition = "width 60s linear";
-  progressFill.style.width = "100%";
+    // Animar la barra de progreso
+    progressFill.style.transition = "width 60s linear";
+    progressFill.style.width = "100%";
 
-  // Detener la grabación automáticamente después de 60 segundos
-  progressTimeout = setTimeout(() => {
-    detenerGrabacion(); // Detener la grabación automáticamente
-  }, 60000);
+    // Detener la grabación automáticamente después de 60 segundos
+    progressTimeout = setTimeout(() => {
+      detenerGrabacion();
+    }, 60000);
 
-  actualizarEstadoBotones();
+    actualizarEstadoBotones();
+  }, 4000); // Retraso de 4 segundos después de reproducir el audio
 });
 
 // Función para detener la grabación (automática o manual)
@@ -572,6 +572,9 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 //   }
 // };
 
+const modalSatisfaccion = document.getElementById("modalSatisfaccion");
+
+// Modificar `sendMail` para abrir el modal de satisfacción después de enviar el correo
 const sendMail = async (to, name, imagen) => {
   console.log("sending email");
   try {
@@ -594,11 +597,38 @@ const sendMail = async (to, name, imagen) => {
     }
 
     alert("Correo enviado exitosamente.");
+    abrirModalSatisfaccion(); // Abrir modal de satisfacción tras el envío
+
   } catch (error) {
     console.error("Error al enviar el correo:", error);
     alert("No se pudo enviar el correo.");
   }
 };
+
+const abrirModalSatisfaccion = () => {
+  modalSatisfaccion.style.display = "flex";
+  reproducirAudioSatisfaccion();
+};
+
+const reproducirAudioSatisfaccion = () => {
+  const texto = "Selecciona una carita según tu experiencia usando la aplicación.";
+  const utterance = new SpeechSynthesisUtterance(texto);
+  utterance.lang = "es-ES";
+  utterance.rate = 0.9;
+  speechSynthesis.speak(utterance);
+};
+
+// Función para cerrar el modal de satisfacción después de elegir una opción
+document.querySelectorAll(".satisfaccion-caras img").forEach(img => {
+  img.addEventListener("click", (event) => {
+    const nivelSatisfaccion = event.target.getAttribute("data-valor");
+    console.log("Nivel de satisfacción seleccionado:", nivelSatisfaccion);
+
+    // Aquí podrías almacenar la respuesta en la base de datos o enviarla al servidor
+    modalSatisfaccion.style.display = "none"; // Cierra el modal después de la selección
+  });
+});
+
 
 btnEnviarMama.addEventListener("click", () => {
   destinatarioSeleccionado = "mama";
@@ -655,10 +685,13 @@ btnListen.addEventListener("click", () => {
     return;
   }
 
-  const texto = textArea.value;
-  const utterance = new SpeechSynthesisUtterance(texto);
-  utterance.lang = "es-ES";
-  speechSynthesis.speak(utterance);
+  setTimeout(() => {
+    const texto = textArea.value;
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = "es-ES";
+    speechSynthesis.speak(utterance);
+  }, 4000)
+
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -737,8 +770,6 @@ formDestinatario.addEventListener("submit", async (event) => {
 });
 
 
-
-
 const enviarCarta = async (destinatario) => {
   try {
     const respuesta = await fetch("/enviar-carta", {
@@ -792,47 +823,67 @@ function detenerSonidos() {
   }
 }
 
+const textos = {
+  bienvenido: "Bienvenido al sistema, pulsa en el microfono para empezar a grabar tu carta.",
+  hablar: "Ha iniciando la grabación, empieza a redactar tu carta.",
+  parar: "Haz detenido la grabación.",
+  limpiar: "Este botón es para borrar tu carta, pulsa en el visto para borrar tu carta o en la equis si no deseas borrar la carta.",
+  enviar: "Escoje a quien vas a enviar tu carta.",
+  escuchar: "Este botón es para escuchar tu carta, este es tú mensaje.",
+  temas: "Selecciona un tema para tu carta.",
+  letras: "Selecciona un tipo de letra para tu carta ",
+  agregar: "Este boton es para agregar destinatarios, solo tus padres o una persona mayor puedes usar esta opción.",
+  elegir: "Has elegido tu destinatario, tu carta a sido enviada."
+};
+
+// Función para reproducir la voz con SpeechSynthesis
+function hablar(texto) {
+  const utterance = new SpeechSynthesisUtterance(texto);
+  utterance.lang = "es-ES";
+  speechSynthesis.speak(utterance);
+}
+
 window.addEventListener("load", () => {
-  sonidos.bienvenido.play();
+  hablar(textos.bienvenido);
 });
 // Asignar eventos a los botones
-document.getElementById("btnStart").addEventListener("mouseenter", () => {
+document.getElementById("btnStart").addEventListener("click", () => {
   detenerSonidos();
-  sonidos.hablar.play();
+  hablar(textos.hablar);
 });
-document.getElementById("btnStop").addEventListener("mouseenter", () => {
+document.getElementById("btnStop").addEventListener("click", () => {
   detenerSonidos();
-  sonidos.parar.play();
+  hablar(textos.parar);
 });
-document.getElementById("btnClear").addEventListener("mouseenter", () => {
+document.getElementById("btnClear").addEventListener("click", () => {
   detenerSonidos();
-  sonidos.limpiar.play();
+  hablar(textos.limpiar);
 });
-document.getElementById("btnSave").addEventListener("mouseenter", () => {
+document.getElementById("btnSave").addEventListener("click", () => {
   detenerSonidos();
-  sonidos.guardar.play();
+  hablar(textos.enviar);
 });
-document.getElementById("btnListen").addEventListener("mouseenter", () => {
+document.getElementById("btnListen").addEventListener("click", () => {
   detenerSonidos();
-  sonidos.escuchar.play();
+  hablar(textos.escuchar);
 });
-document.getElementById("btnTheme").addEventListener("mouseenter", () => {
+document.getElementById("btnTheme").addEventListener("click", () => {
   detenerSonidos();
-  sonidos.temas.play();
+  hablar(textos.temas);
 });
-document.getElementById("btnletter").addEventListener("mouseenter", () => {
+document.getElementById("btnletter").addEventListener("click", () => {
   detenerSonidos();
-  sonidos.letras.play();
+  hablar(textos.letras);
 });
 document
   .getElementById("btnAgregarDestinatario")
-  .addEventListener("mouseenter", () => {
+  .addEventListener("click", () => {
     detenerSonidos();
-    sonidos.agregar.play();
+    hablar(textos.agregar);
   });
-document.getElementById("elegir").addEventListener("mouseenter", () => {
+document.getElementById("elegir").addEventListener("click", () => {
   detenerSonidos();
-  sonidos.elegir.play();
+  hablar(textos.elegir);
 });
 
 // Actualizar el estado de los botones al cargar
