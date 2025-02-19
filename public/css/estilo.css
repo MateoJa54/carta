@@ -6,7 +6,103 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #ffdec7; 
+    background-color: #ffecdf; 
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    display: flex;
+}
+
+#loginContainer, #registroContainer {
+    background: #ffe1ad;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #5d2929;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 5px;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: tomato;
+    box-shadow: 0 0 5px rgba(152, 90, 42, 0.5);
+    outline: none;
+}
+
+.btn-ingreso {
+    background: tomato;
+    color: white;
+    padding: 10px;
+    border: none;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-ingreso:hover {
+    background: rgb(255, 83, 52);
+}
+
+.switch {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.switch a {
+    color: tomato;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.switch a:hover {
+    text-decoration: underline;
+}
+
+/* Contenedor del botón de Cerrar sesión */
+#logoutContainer {
+    position: fixed; /* Fija el botón en la pantalla */
+    top: 20px; /* Distancia desde la parte superior */
+    right: 20px; /* Distancia desde la parte derecha */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Estilos para el botón de Cerrar sesión */
+#logout {
+    background-color: tomato; /* Color de fondo */
+    color: white; /* Color del texto */
+    padding: 10px 20px; /* Espaciado interno */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    font-size: 16px; /* Tamaño de la fuente */
+    transition: background-color 0.3s, transform 0.2s; /* Transiciones suaves */
+}
+
+#logout:hover {
+    background-color: #e55a50; /* Cambia el color al pasar el mouse */
+    transform: scale(1.05); /* Efecto de escala al pasar el mouse */
 }
 
 .contenedor {
