@@ -676,7 +676,7 @@ const sendMail = async (to, name, imagen) => {
   console.log("sending email");
   try {
     console.log("image", imagen);
-    const response = await fetch("https://simplelovelycarta.onrender.com/", {
+    const response = await fetch("http://127.0.0.1:3000/send-email", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
