@@ -1,3 +1,100 @@
+document.addEventListener('DOMContentLoaded', function () {
+  const loginContainer = document.getElementById('loginContainer');
+  const registroContainer = document.getElementById('registroContainer');
+
+  // Mostrar registro y ocultar login
+  document.querySelector('#loginContainer .switch a').addEventListener('click', function (event) {
+      event.preventDefault(); // Evita la redirección
+      loginContainer.style.display = 'none';
+      registroContainer.style.display = 'block';
+  });
+
+  // Mostrar login y ocultar registro
+  document.querySelector('#registroContainer .switch a').addEventListener('click', function (event) {
+      event.preventDefault(); // Evita la redirección
+      registroContainer.style.display = 'none';
+      loginContainer.style.display = 'block';
+  });
+
+  async function verificarSesion() {
+      const response = await fetch('/perfil');
+      const data = await response.json();
+
+      if (response.ok) {
+          loginContainer.style.display = 'none';
+          registroContainer.style.display = 'none';
+          contenidoPrincipal.style.display = 'flex';
+      } else {
+          loginContainer.style.display = 'block';
+          contenidoPrincipal.style.display = 'none';
+      }
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('registroContainer').style.display = 'none';
+            document.getElementById('contenidoPrincipal').style.display = 'flex';
+        } else {
+            alert("Error: " + data.error);
+        }
+    } catch (error) {
+        console.error('Error en la solicitud:', error);
+        alert("Error de red. Inténtalo de nuevo.");
+    }
+  });
+
+  document.getElementById('registroForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const email = document.getElementById('newEmail').value;
+    const password = document.getElementById('newPassword').value;
+    const hijoGenero = document.getElementById('hijoGenero').value;
+
+    try {
+        const response = await fetch('/registro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, hijoGenero })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert("Registro exitoso. Ahora puedes iniciar sesión.");
+            document.getElementById('registroContainer').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'block';
+        } else {
+            alert("Error: " + data.error);
+        }
+    } catch (error) {
+        console.error('Error en la solicitud:', error);
+        alert("Error de red. Inténtalo de nuevo.");
+    }
+  });
+
+  document.getElementById('logout').addEventListener('click', async function () {
+      await fetch('/logout', { method: 'POST' });
+      verificarSesion();
+  });
+
+  verificarSesion();
+});
+
 const btnStart = document.getElementById("btnStart");
 const btnStop = document.getElementById("btnStop");
 const btnClear = document.getElementById("btnClear");
@@ -843,9 +940,9 @@ function hablar(texto) {
   speechSynthesis.speak(utterance);
 }
 
-window.addEventListener("load", () => {
-  hablar(textos.bienvenido);
-});
+// window.addEventListener("load", () => {
+//   hablar(textos.bienvenido);
+// });
 // Asignar eventos a los botones
 document.getElementById("btnStart").addEventListener("click", () => {
   detenerSonidos();
