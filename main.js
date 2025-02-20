@@ -193,5 +193,5 @@ app.post('/send-email', async (req, res) => {
 
 // Servidor
 app.listen(port, () => {
-    console.log(`✅ Servidor corriendo en http://localhost:${port}`);
+    console.log(`✅ Servidor corriendo en http://0.0.0.0:${port}`);
 });
